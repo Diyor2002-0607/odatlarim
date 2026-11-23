@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Odatlar</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--c-blue:#6cb4ff;--c-green:#5fd3a0;--c-pink:#ff8fb1;--c-orange:#ffa94d;--c-violet:#b197fc;--c-teal:#3bc9db;--c-yellow:#ffd43b;--c-red:#ff8787;--bg:#000;--sf:#1a1a1a;--tx:#e8e8e8;--mu:#8a8a8a;--ln:#1f1f1f;--ln2:#333;--ac:#6cb4ff;--on:#000;--rd:#ff6b6b;color-scheme:dark}
+:root[data-t=light]{--c-blue:#1a6fd6;--c-green:#13885a;--c-pink:#d6336c;--c-orange:#d9730d;--c-violet:#7048e8;--c-teal:#0b8a99;--c-yellow:#a67c00;--c-red:#d63939;--bg:#fff;--sf:#f2f3f5;--tx:#16181b;--mu:#707780;--ln:#eceef0;--ln2:#d3d7db;--ac:#1a6fd6;--on:#fff;--rd:#d93636;color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{font:13px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);display:flex;flex-direction:column;max-width:720px;margin:0 auto;padding-top:env(safe-area-inset-top,0px)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+header{display:flex;align-items:center;padding:6px 12px 2px;font-size:19px}
+header span{flex:1}header button{width:34px;height:34px;font-size:20px;color:var(--mu)}
+main{flex:1;overflow:auto}
+nav{display:flex;border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;padding:4px 0 5px;font-size:10.5px;color:var(--mu)}nav button b{display:block;font-size:15px;font-weight:400}nav .on{color:var(--ac)}
+.g{display:grid;width:max-content;min-width:100%}
+.g>div{height:36px;display:flex;align-items:center;justify-content:center;border-top:1px solid var(--ln)}
+.g .h{height:32px;flex-direction:column;font-size:10px;color:var(--mu);line-height:1.25;border-top:0}
+.g .h.t{color:var(--tx);font-weight:600}
+.g .n{position:sticky;left:0;background:var(--bg);justify-content:flex-start;padding:0 6px 0 12px;color:var(--ac);z-index:1;font-size:14px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;line-height:36px;border-right:1px solid var(--ln)}
+.g .c{border-left:1px solid var(--ln);cursor:pointer;font-size:16px}
+.c .y{color:var(--hc,var(--ac))}.c .p{color:var(--hc,var(--ac));opacity:.32}.c .x{color:var(--mu)}.c .z{color:var(--hc,var(--ac))}.c .e{color:var(--mu)}
+.hint{padding:8px 12px;color:var(--mu);font-size:11px}
+.empty{padding:50px 24px;text-align:center;color:var(--mu);line-height:1.6}
+.bt{padding:12px 18px;border-radius:10px;background:var(--ac);color:var(--on);font-weight:600}
+.bt.g2{background:var(--sf);color:var(--tx)}.bt.r{background:var(--sf);color:var(--rd)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:9;padding:16px}
+.sh{background:var(--sf);border-radius:16px;padding:18px;width:100%;max-width:380px;max-height:92%;overflow:auto;color:var(--tx)}
+.sh h2{font-size:17px;margin:0;font-weight:600}.sub{font-size:12.5px;color:var(--mu);margin-top:2px}
+label{display:block;font-size:12.5px;color:var(--mu);margin:14px 0 5px}
+input,select{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--ln2);border-radius:10px;padding:10px;width:100%}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.r2{display:flex;gap:8px;align-items:center}
+.q{display:flex;gap:6px;margin:10px 0 0;flex-wrap:wrap}
+.q button,.chip{border:1px solid var(--ln2);border-radius:8px;padding:6px 12px;font-size:13px;color:var(--tx);background:var(--bg)}
+.chip.on{background:var(--ac);border-color:var(--ac);color:var(--on);font-weight:600}
+.m{display:flex;gap:8px;margin-top:16px}
+.m button{flex:1;height:48px;border:1px solid var(--ln2);border-radius:10px;font-size:22px;background:var(--bg)}
+.dw{display:flex;gap:4px}.dw button{flex:1;padding:9px 0;border:1px solid var(--ln2);border-radius:8px;font-size:12px;background:var(--bg)}.dw .on{background:var(--ac);border-color:var(--ac);color:var(--on)}
+.st{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.st div{background:var(--bg);border-radius:10px;padding:10px}.st b{display:block;font-size:19px;font-weight:600}.st span{font-size:12px;color:var(--mu)}
+.cols{display:flex;gap:4px;align-items:flex-end;height:70px;margin-top:8px}.cols div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:10.5px;color:var(--mu);gap:3px}.cols i{width:100%;background:var(--ac);border-radius:3px 3px 0 0;min-height:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.row>*{flex:1}
+.pm{padding:8px 16px 20px}
+.big{font-size:64px;text-align:center;font-variant-numeric:tabular-nums;font-weight:300;margin:22px 0 4px}
+.bar{height:3px;background:var(--ln2);border-radius:2px;margin:8px 0 22px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+.ph{text-align:center;color:var(--mu);font-size:13px}
+.mini{margin:0 16px 8px;padding:9px 12px;border-radius:10px;background:var(--sf);color:var(--ac);display:flex;justify-content:space-between;cursor:pointer;font-size:14px}
+.tg{display:flex;gap:10px;align-items:center;margin-top:14px;font-size:14px;color:var(--tx)}.tg input{width:20px;height:20px;accent-color:var(--ac)}
+.mn button{display:block;width:100%;text-align:left;padding:13px 4px;border-bottom:1px solid var(--ln2);font-size:15px}
+.dv{position:fixed;inset:0;background:var(--bg);z-index:5;display:flex;flex-direction:column;max-width:720px;margin:0 auto;padding-top:env(safe-area-inset-top,0px)}
+.dh{display:flex;align-items:center;gap:4px;padding:10px 8px;font-size:21px}.dh span{flex:1;padding-left:8px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.dh button{width:42px;height:42px;font-size:22px}
+.db{flex:1;overflow:auto;padding:0 16px 30px}
+.sc{color:var(--ac);font-size:19px;margin:24px 0 10px;display:flex;justify-content:space-between;align-items:center}.sc select{width:auto;border:0;background:none;color:var(--tx);padding:4px;font-size:15px}
+.dl{text-align:center;color:var(--mu);font-size:13px;margin-top:6px}
+.tr0{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:13px;color:var(--mu)}.tr0>span{width:52px;text-align:right}
+.tb{flex:1;display:flex;height:30px;border-radius:6px;overflow:hidden;background:var(--sf)}
+.tf{background:var(--ac);color:var(--on);display:flex;align-items:center;justify-content:center;font-size:13px;overflow:hidden}
+.tm{flex:1;display:flex;align-items:center;justify-content:center;color:var(--tx);font-size:13px}
+.cw{display:flex;gap:8px}.cwl{display:grid;grid-template-rows:repeat(7,34px);gap:3px;margin-top:23px;font-size:12px;color:var(--mu);align-items:center;order:2}
+.cs{overflow-x:auto;flex:1}.cm{display:grid;grid-auto-flow:column;grid-auto-columns:34px;gap:3px;height:20px;font-size:12px;color:var(--mu);width:max-content;margin-bottom:3px}
+.cg{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,34px);grid-auto-columns:34px;gap:3px;width:max-content}
+.cg div{display:flex;align-items:center;justify-content:center;border-radius:5px;background:var(--sf);color:var(--mu);font-size:14px;cursor:pointer}
+.cg .cy{background:var(--ac);color:var(--on)}.cg .cp{background:color-mix(in srgb,var(--ac) 50%,var(--bg));color:var(--on)}.cg .cn{background:none;cursor:default}
+.g .c{position:relative;background:linear-gradient(to top,color-mix(in srgb,var(--tx) 11%,transparent) var(--f,0%),transparent var(--f,0%))}
+.pal{display:flex;gap:10px;flex-wrap:wrap}.pal[hidden]{display:none}.sw{width:26px;height:26px;border-radius:50%;flex:none}.pal button{width:32px;height:32px;border-radius:50%;border:2px solid transparent}.pal .on{outline:2px solid var(--tx);outline-offset:2px}
+textarea{font:12px/1.4 ui-monospace,monospace;color:var(--tx);background:var(--bg);border:1px solid var(--ln2);border-radius:10px;padding:10px;width:100%;height:90px;resize:none}
+@keyframes pop{0%{transform:scale(.2) rotate(-20deg);opacity:0}60%{transform:scale(1.25) rotate(4deg);opacity:1}100%{transform:none}}
+@keyframes glow{0%{transform:scale(.3);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+@keyframes ptc{0%{opacity:.9;transform:rotate(var(--a)) translateX(3px)}100%{opacity:0;transform:rotate(var(--a)) translateX(16px)}}
+@keyframes fin{from{opacity:0}to{opacity:1}}@keyframes fout{from{opacity:.4}to{opacity:0}}
+.fx{overflow:hidden;position:relative}
+.fx::after{content:"";position:absolute;left:50%;top:50%;width:30px;height:30px;margin:-15px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--hc,var(--ac)) 55%,transparent),transparent 70%);animation:glow .55s ease-out forwards;pointer-events:none}
+.fx .y,.fx .p{display:inline-block;animation:pop .38s cubic-bezier(.2,1.4,.4,1)}
+.fx .pt{position:absolute;left:50%;top:50%;width:3px;height:3px;margin:-1.5px;border-radius:50%;background:var(--hc,var(--ac));opacity:0;animation:ptc .55s ease-out forwards;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.fx .y,.fx .p{animation:fin .2s linear}.fx::after{background:color-mix(in srgb,var(--hc,var(--ac)) 30%,transparent);animation:fout .3s linear forwards}.fx .pt{display:none}}
+.gl .gr{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 2px;border-bottom:1px solid var(--ln2);font-size:16px}
+.gb{width:24px;height:24px;border:2px solid var(--ln2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}.gb.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
+.sx{width:42px;height:42px;flex:none;border:1px solid var(--ln2);border-radius:10px;font-size:20px;color:var(--rd)}
+.rb{display:flex;gap:2px;align-items:flex-end;height:84px;margin-top:8px}.rb div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:10px;color:var(--mu);gap:3px}.rb i{width:100%;background:var(--ac);border-radius:3px 3px 0 0;min-height:2px}.rb .z i{background:var(--ln2)}
+.rh{display:flex;align-items:center;gap:8px;margin:8px 0 4px;font-size:13px}.rh>span{flex:1}.up{color:var(--ac)}.dn{color:var(--rd)}
+.g .c i.nd{position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;background:var(--hc,var(--ac));pointer-events:none}
+.nt{font:inherit;height:64px;margin-top:2px}
+.tk{display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid var(--ln)}
+.tc{width:32px;height:32px;border-radius:50%;border:2px solid var(--ln2);color:var(--on);font-size:15px;flex:none;box-shadow:0 0 0 4px transparent;background:none}
+.tc.on{background:var(--ac);border-color:var(--ac)}
+.pq{width:18px;text-align:center;font-weight:700;font-size:15px;flex:none}.pq-u{color:var(--rd)}.pq-i{color:var(--c-orange)}.pq-l{color:var(--mu)}
+.tt{flex:1;min-width:0;padding:4px 0;cursor:pointer}.tn{font-size:14.5px;word-break:break-word}.tmeta{font-size:11.5px;color:var(--mu);margin-top:1px}.tmeta.od{color:var(--rd)}
+.dne .tn{text-decoration:line-through;color:var(--mu)}.dne .pq{opacity:.45}
+.tfb{display:flex;gap:6px;padding:8px 12px;align-items:center;flex-wrap:wrap}.tfb select{width:auto;padding:5px 8px;font-size:12px;margin-left:auto}
+.pk{display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--ln2);border-radius:10px;margin-bottom:8px;background:var(--bg);font-size:14px}.pk.on{border-color:var(--ac);outline:1px solid var(--ac)}.pk b{display:inline-block;width:22px}
+.ts{position:fixed;top:env(safe-area-inset-top,0px);left:12px;right:12px;margin:8px auto 0;max-width:500px;background:var(--sf);border:1px solid var(--ac);color:var(--tx);padding:12px 14px;border-radius:12px;z-index:20}
+.g .n[data-d]{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.g .drg{outline:1px solid var(--ac);outline-offset:-1px;position:relative;z-index:3;background-color:var(--sf)}
+html,body{overscroll-behavior:none}.ts{cursor:pointer}
+</style>
+</head>
+<body>
+<header><span id="ttl">Odatlar</span><button id="srt" aria-label="Saralash">⇅</button><button id="add" aria-label="Odat qoʻshish">+</button><button id="mnu" aria-label="Menyu">⋮</button></header>
+<main id="app"></main>
+<nav><button id="n0"><b>☰</b>Qaydlar</button><button id="n1"><b>✓</b>Asosiy</button><button id="n2"><b>◷</b>Pomidor</button></nav>
+<div id="md"></div><div id="dt"></div><div id="fm"></div>
+<script>
+const $=s=>document.querySelector(s),DN=['DUSH','SESH','CHOR','PAY','JUM','SHAN','YAK'],DS=['Du','Se','Ch','Pa','Ju','Sh','Ya'],MN=['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
+const UN=['daqiqa','soat','marta','sahifa','stakan','ml','litr','km'];
+const CL=['blue','green','pink','orange','violet','teal','yellow','red'],CN={blue:'Koʻk',green:'Yashil',pink:'Pushti',orange:'Toʻq sariq',violet:'Binafsha',teal:'Moviy',yellow:'Sariq',red:'Qizil'};
+const hk=h=>CL.includes(h.color)?h.color:'blue',hc=h=>'var(--c-'+hk(h)+')';
+const gk=(h,d)=>{if(!h.group||!h.subs)return 0;const c=get(h,d);return c&&c.d?h.subs.filter(z=>c.d[z.id]).length:0};
+const gfull=(h,d)=>!!(h.group&&h.subs&&h.subs.length&&gk(h,d)===h.subs.length);
+const fillP=(h,d)=>cellInfo(h,d).f;
+let S={habits:[],logs:{},notes:{},tasks:[],sessions:[],set:{theme:'dark',focus:25,brk:5},timer:null};
+try{const r=localStorage.getItem('odat2');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+if(!Array.isArray(S.habits))S.habits=[];if(!S.logs||typeof S.logs!=='object'||Array.isArray(S.logs))S.logs={};if(!Array.isArray(S.sessions))S.sessions=[];if(!S.notes||typeof S.notes!=='object'||Array.isArray(S.notes))S.notes={};if(!Array.isArray(S.tasks))S.tasks=[];if(!S.set||typeof S.set!=='object')S.set={theme:'dark',focus:25,brk:5};
+const save=()=>{try{localStorage.setItem('odat2',JSON.stringify(S))}catch(e){}syncR()};
+/* Telegram Mini App */
+const TG=(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData)?Telegram.WebApp:null;
+const tgv=v=>!!(TG&&TG.isVersionAtLeast&&TG.isVersionAtLeast(v));
+if(TG){try{TG.ready();TG.expand();if(tgv('7.7'))TG.disableVerticalSwipes()}catch(e){}
+  if(!S.set.themeSet&&(TG.colorScheme==='light'||TG.colorScheme==='dark'))S.set.theme=TG.colorScheme;
+  try{TG.onEvent('themeChanged',()=>{if(!S.set.themeSet&&TG.colorScheme!==S.set.theme){S.set.theme=TG.colorScheme;render()}})}catch(e){}}
+function cf(m,fn){if(tgv('6.2')){try{TG.showConfirm(m,ok=>{if(ok)fn()});return}catch(e){}}if(confirm(m))fn()}
+function al(m){if(tgv('6.2')){try{TG.showAlert(m);return}catch(e){}}alert(m)}
+function hap(t){try{if(tgv('6.1'))TG.HapticFeedback.notificationOccurred(t||'success')}catch(e){}}
+/* eslatmalarni serverga (bot) yuborish */
+let SY_T=null,SY_LAST='',SY_ST={ok:null,err:''},WA=false;
+async function api(p,body){const b=JSON.stringify(Object.assign({initData:TG.initData},body));
+  const r=await fetch('/api/'+p,{method:'POST',headers:{'content-type':'application/json'},body:b,keepalive:b.length<60000});
+  let j={};try{j=await r.json()}catch(e){}if(!r.ok&&!j.err)j.err='HTTP '+r.status;return j}
+function syncPayload(){const t=today(),k=ds(t),now=Date.now();return{tz:(Intl.DateTimeFormat().resolvedOptions().timeZone)||'',off:-t.getTimezoneOffset(),
+  habits:S.habits.filter(h=>h.time).map(h=>({id:h.id,name:h.name,time:h.time,days:h.days,done:get(h,t)?[k]:[]})),
+  tasks:(S.tasks||[]).filter(x=>x.notify&&x.due&&!x.done).map(x=>({id:x.id,title:x.title,at:new Date(x.due).getTime()})).filter(x=>x.at>now-6*3600e3),
+  timer:S.timer&&S.timer.endAt?{at:S.timer.endAt,phase:S.timer.phase,name:(S.habits.find(h=>h.id===S.timer.hid)||{}).name||''}:null}}
+function syncR(){if(!TG)return;clearTimeout(SY_T);SY_T=setTimeout(()=>syncNow(false),1200)}
+async function syncNow(force){if(!TG)return;clearTimeout(SY_T);const p=syncPayload(),s=JSON.stringify(p);if(!force&&s===SY_LAST&&SY_ST.ok)return;
+  try{const r=await api('sync',{data:p});if(r.ok){SY_LAST=s;SY_ST={ok:true,err:''}}else SY_ST={ok:false,err:r.err||'xato'}}catch(e){SY_ST={ok:false,err:'internet yoʻq'}}
+  const e=document.getElementById('ss');if(e)e.textContent=syncTxt()}
+const syncTxt=()=>SY_ST.ok===null?'Eslatmalar serverga ulanmoqda…':SY_ST.ok?'Eslatmalar serverda ✓ — vaqti kelganda bot xabar yuboradi.':SY_ST.err==='auth'?'Sessiya eskirgan: ilovani yopib, bot orqali qayta oching.':'Eslatmalar serverga yetmadi ('+SY_ST.err+'). Ilova keyinroq qayta urinadi.';
+let tab='main',selH=null,DAYS=45,first=true;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ds=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const pd=k=>{const[a,b,c]=k.split('-');return new Date(+a,+b-1,+c)};
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const wd=d=>(d.getDay()+6)%7,today=()=>new Date();
+const sched=(h,d)=>h.days.includes(wd(d));
+const get=(h,d)=>(S.logs[h.id]||{})[ds(d)];
+const num=v=>Math.round(v*100)/100;
+/* Katak holati: bitta manba. p — haqiqiy foiz (0..100), f — katak fonida koʻrinadigan toʻlish, s — belgi */
+function cellInfo(h,d){
+  const E={p:0,f:0,s:'e'},part=p=>p>=99.99?{p:100,f:0,s:'y'}:p>0?{p,f:p,s:'p'}:E;
+  if(h.group){const n=h.subs?h.subs.length:0;return n?part(Math.min(100,gk(h,d)/n*100)):E}
+  const c=get(h,d);if(!c)return E;
+  if(c.s==='x')return{p:0,f:0,s:'x'};if(c.s==='z')return{p:0,f:0,s:'z'};
+  if(h.unit&&h.goal>0)return part(Math.max(0,Math.min(100,(Number(c.v)||0)/h.goal*100)));
+  return{p:100,f:0,s:'y'}}
+function st(h,d){return cellInfo(h,d).s}
+const SY={y:'✓',p:'✓',x:'×',z:'−',e:'×'};
+function score(h,d){if(h.group){const n=h.subs.length,k=gk(h,d);return n&&k?k/n:null}const c=get(h,d);if(!c||c.s==='z')return null;if(c.s==='x')return 0;return h.unit&&h.goal?Math.min(1,(c.v||0)/h.goal):1}
+function streak(h){let n=0,d=today(),f=true;for(let i=0;i<500;i++,d=addD(d,-1)){const c=get(h,d);if(!sched(h,d)&&!c)continue;if(h.group?gfull(h,d):c&&c.s==='y'&&cellInfo(h,d).p>0)n++;else if(c&&c.s==='z')continue;else if(f&&ds(d)===ds(today())){}else break;f=false}return n}
+function rate(h,days=30){let a=0,k=0;for(let i=0;i<days;i++){const d=addD(today(),-i);if(!sched(h,d)&&!get(h,d))continue;const s=score(h,d);if(s===null&&!(i===0))continue;if(s===null)continue;k++;a+=s}return k?Math.round(a/k*100):0}
+const fv=(h,v)=>h.unit?num(v)+' '+h.unit:'';
+function applyTheme(){document.documentElement.dataset.t=S.set.theme;if(!TG)return;const bg=S.set.theme==='light'?'#ffffff':'#000000';
+  try{if(tgv('6.9'))TG.setHeaderColor(bg);else if(tgv('6.1'))TG.setHeaderColor('bg_color');if(tgv('6.1'))TG.setBackgroundColor(bg);if(tgv('7.10'))TG.setBottomBarColor(bg)}catch(e){}}
+const nPerm=()=>!('Notification' in window)?'bu brauzerda yoʻq':Notification.permission==='granted'?'yoqilgan ✓':Notification.permission==='denied'?'bloklangan (brauzer sozlamalarida yoqing)':'yoqish uchun bosing';
+async function testMsg(){const e=$('#ss');e.textContent='Sinov xabari yuborilmoqda…';
+  try{await syncNow(true);const r=await api('test',{});e.textContent=r.ok?'Sinov xabari bot chatiga yuborildi ✓ Telegram chatni tekshiring.':'Yuborib boʻlmadi: '+(r.err==='auth'?'ilovani bot orqali qayta oching':r.err||'xato')+'. Botga /start yuborganingizni tekshiring.'}catch(x){e.textContent='Server bilan aloqa yoʻq.'}}
+/* navigation */
+$('#n0').onclick=()=>{tab='task';render()};$('#n1').onclick=()=>{tab='main';render()};$('#n2').onclick=()=>{tab='pomo';render()};
+$('#add').onclick=()=>tab==='task'?taskForm():form();$('#srt').onclick=()=>sortMenu();
+function menu(){
+  const nt=TG?`<button id="nt1">Eslatmalar: sinov xabarini yuborish</button>${HS!=='unsupported'?`<button id="hs">${HS==='added'?'Asosiy ekranda bor ✓':'📲 Telefon asosiy ekraniga qoʻshish'}</button>`:''}`:`<button id="nt2">Bildirishnomalar: ${nPerm()}</button>`;
+  modal(`<h2>Sozlamalar</h2>${TG?`<div class="sub" id="ss" style="margin-top:6px">${syncTxt()}</div>`:''}<div class="mn" style="margin-top:8px">${nt}<button id="a1">Mavzu: ${S.set.theme==='dark'?'qorongʻi':'ochiq'} — almashtirish</button><button id="rp">Haftalik va oylik hisobot</button><button id="ex">Ma’lumotlarni eksport qilish</button><button id="im">Ma’lumotlarni import qilish</button><button id="a2">Namunaviy odatlarni qoʻshish</button><button id="a3" style="color:var(--rd)">Barcha ma’lumotlarni oʻchirish</button></div>${TG?'':'<div class="sub" style="margin-top:8px">Brauzerda eslatmalar faqat sahifa ochiq turganda keladi. Ishonchli eslatmalar uchun ilovani Telegram bot orqali oching.</div>'}<div class="row"><button class="bt g2" id="a0">Yopish</button></div>`,()=>{
+  $('#a0').onclick=close;$('#a1').onclick=()=>{S.set.theme=S.set.theme==='dark'?'light':'dark';S.set.themeSet=true;save();close();render()};
+  if($('#nt1'))$('#nt1').onclick=testMsg;if($('#hs'))$('#hs').onclick=()=>{if(HS==='added')return;close();homeAdd()};
+  if($('#nt2'))$('#nt2').onclick=async()=>{try{if('Notification' in window&&Notification.permission==='default')await Notification.requestPermission()}catch(e){}menu()};
+  $('#rp').onclick=()=>{close();report()};$('#ex').onclick=exportDlg;$('#im').onclick=importDlg;
+  $('#a2').onclick=()=>{seed();close();render()};
+  $('#a3').onclick=()=>cf('Hamma odat va tarix oʻchirilsinmi?',()=>{S={habits:[],logs:{},notes:{},tasks:[],sessions:[],set:S.set,timer:null};save();close();render()})})}
+$('#mnu').onclick=menu;
+/* eksport / import */
+const bname=()=>'odatlar-zaxira-'+ds(today())+'.json';
+const nLog=L=>Object.values(L).reduce((a,m)=>a+Object.keys(m).length,0);
+function backupText(){return JSON.stringify({app:'odatlar',version:1,exported:new Date().toISOString(),habits:S.habits,logs:S.logs,notes:S.notes||{},tasks:S.tasks||[],order:S.order||[],sessions:S.sessions,settings:S.set},null,1)}
+function exportDlg(){
+  const sh=!TG&&!!(navigator.canShare&&window.File);
+  modal(`<h2>Ma’lumotlarni eksport qilish</h2><div class="sub">Zaxira faylida ${S.habits.length} ta odat, ${nLog(S.logs)} ta kunlik yozuv va ${S.sessions.length} ta Pomidor mashgʻuloti bor. Fayl ${bname()} nomi bilan saqlanadi.</div>
+  <div class="mn" style="margin-top:8px">${TG?'<button id="e4">Bot chatiga fayl qilib yuborish</button>':'<button id="e1">Faylga saqlash</button>'}${sh?'<button id="e2">Telegram yoki boshqa ilovaga yuborish</button>':''}<button id="e3">Matnni nusxalash</button></div><div id="msg" class="sub" style="min-height:18px;margin-top:8px"></div><div class="row"><button class="bt g2" id="x">Yopish</button></div>`,()=>{
+    const say=t=>{$('#msg').textContent=t};$('#x').onclick=close;
+    if($('#e4'))$('#e4').onclick=async()=>{say('Yuborilmoqda…');try{const r=await api('backup',{name:bname(),text:backupText()});say(r.ok?'Zaxira fayli bot chatiga yuborildi ✓':'Yuborib boʻlmadi: '+(r.err||'xato'))}catch(e){say('Server bilan aloqa yoʻq. «Matnni nusxalash»dan foydalaning.')}};
+    if($('#e1'))$('#e1').onclick=async()=>{const data=backupText();let d=null;try{d=window.claude&&claude.use?await claude.use('downloads'):null}catch(e){}
+      try{if(d){await d.save({filename:bname(),data});say('Fayl saqlash uchun yuborildi.')}else{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=bname();document.body.appendChild(a);a.click();a.remove();say('Fayl yuklab olindi.')}}
+      catch(e){say(e&&e.code==='declined'?'Saqlash bekor qilindi.':'Saqlab boʻlmadi. «Matnni nusxalash» orqali ham zaxira olishingiz mumkin.')}};
+    if($('#e2'))$('#e2').onclick=()=>{const f=new File([backupText()],bname(),{type:'application/json'});
+      if(navigator.canShare({files:[f]}))navigator.share({files:[f],title:'Odatlar zaxirasi'}).catch(()=>say('Yuborish bekor qilindi.'));else say('Bu qurilmada yuborish ishlamaydi. Faylga saqlang.')};
+    $('#e3').onclick=()=>{const t=backupText();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>say('Matn nusxalandi. Uni Telegram’ga yoki eslatmaga qoʻyib saqlang.')).catch(()=>say('Nusxalab boʻlmadi. Faylga saqlashni sinab koʻring.'))}})}
+const OK_ID=/^[A-Za-z0-9_-]{1,40}$/,rid=()=>'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const okDate=k=>/^\d{4}-\d\d-\d\d$/.test(k)&&ds(pd(k))===k,nk=h=>h.name.trim().toLowerCase()+'|'+h.unit+(h.group?'|g':'');
+function cleanBackup(d){
+  const F=m=>{throw new Error(m)};
+  if(!d||typeof d!=='object'||Array.isArray(d))F('bu zaxira fayli emas');
+  if(d.app!=='odatlar')F('fayl “Odatlar” ilovasidan emas');
+  if(!Array.isArray(d.habits)||!d.logs||typeof d.logs!=='object'||Array.isArray(d.logs)||!Array.isArray(d.sessions))F('fayl tuzilishi buzilgan');
+  if(d.habits.length>500||d.sessions.length>100000)F('fayl haddan tashqari katta');
+  const map={},H=[],L={},P=[],sk=new Set();let nl=0;
+  d.habits.forEach((h,i)=>{
+    if(!h||typeof h!=='object'||typeof h.name!=='string'||!h.name.trim())F((i+1)+'-odat buzilgan yoki nomi yoʻq');
+    const nm='“'+h.name.trim().slice(0,20)+'”';
+    if(!Array.isArray(h.days)||!h.days.length||!h.days.every(x=>Number.isInteger(x)&&x>=0&&x<=6))F(nm+' odatining kunlari notoʻgʻri');
+    const unit=h.group?'':h.unit==null?'':h.unit,goal=Number(h.goal)||0;
+    if(unit!==''&&!UN.includes(unit))F(nm+' odatining birligi notoʻgʻri');
+    if(unit&&!(goal>0&&goal<=1e6))F(nm+' odatining maqsadi notoʻgʻri');
+    let subs=null;if(h.group){if(!Array.isArray(h.subs)||!h.subs.length||h.subs.length>100)F(nm+' guruhining kichik odatlari notoʻgʻri');const si=new Set();
+      subs=h.subs.map(z=>{if(!z||typeof z.name!=='string'||!z.name.trim()||typeof z.id!=='string'||!OK_ID.test(z.id)||si.has(z.id))F(nm+' guruhining kichik odati notoʻgʻri');si.add(z.id);return{id:z.id,name:z.name.trim().slice(0,40)}})}
+    const key=typeof h.id==='string'?h.id:'';
+    const hh={id:'',name:h.name.trim().slice(0,40),unit,goal:unit?goal:0,days:[...new Set(h.days)].sort(),time:/^\d\d:\d\d$/.test(h.time||'')?h.time:'',color:CL.includes(h.color)?h.color:'blue'};
+    if(subs){hh.group=true;hh.subs=subs}
+    const dup=H.find(x=>x.oid===key&&key)||H.find(x=>nk(x)===nk(hh));
+    if(dup){if(key&&!map[key])map[key]=dup.id;return}
+    hh.id=OK_ID.test(key)&&!H.some(x=>x.id===key)?key:rid()+i;hh.oid=key;if(key)map[key]=hh.id;H.push(hh)});
+  H.forEach(h=>delete h.oid);
+  Object.keys(d.logs).forEach(oid=>{const m=d.logs[oid],t=map[oid];if(!m||typeof m!=='object'||Array.isArray(m))F('kunlik yozuvlar buzilgan');if(!t)return;
+    const th=H.find(x=>x.id===t),o=L[t]=L[t]||{};Object.keys(m).forEach(k=>{const c=m[k],v=Number(c&&c.v!=null?c.v:0);
+      if(!okDate(k)||!c||typeof c!=='object'||!['y','z','x','p'].includes(c.s)||!isFinite(v)||v<0||v>1e6)F('kunlik yozuv notoʻgʻri ('+String(k).slice(0,12)+')');
+      if(o[k])return;if(++nl>200000)F('yozuvlar haddan tashqari koʻp');if(th&&th.group){const dd={};if(c.d&&typeof c.d==='object')th.subs.forEach(z=>{if(c.d[z.id])dd[z.id]=1});const kk=Object.keys(dd).length;if(!kk)return;o[k]={s:kk===th.subs.length?'y':'x',v:0,d:dd}}else o[k]={s:c.s==='p'?'y':c.s,v}})});
+  d.sessions.forEach(x=>{if(!x||typeof x!=='object'||!okDate(String(x.date))||!(Number(x.min)>0&&Number(x.min)<=1440))F('Pomidor mashgʻuloti yozuvi notoʻgʻri');
+    const t=map[x.hid];if(!t)return;const ts=Number(x.ts)||0,q=t+'|'+ts+'|'+Number(x.min);if(ts&&sk.has(q))return;sk.add(q);P.push({hid:t,date:x.date,min:Number(x.min),ts})});
+  const N={};if(d.notes!=null){if(typeof d.notes!=='object'||Array.isArray(d.notes))F('izohlar buzilgan');
+    Object.keys(d.notes).forEach(oid=>{const m=d.notes[oid],t=map[oid];if(!m||typeof m!=='object'||Array.isArray(m))F('izohlar buzilgan');if(!t)return;
+      Object.keys(m).forEach(k=>{if(!okDate(k)||typeof m[k]!=='string')F('izoh yozuvi notoʻgʻri');const v=m[k].trim().slice(0,500);if(v)(N[t]=N[t]||{})[k]=v})})}
+  const T=[];if(d.tasks!=null){if(!Array.isArray(d.tasks)||d.tasks.length>5000)F('qaydlar buzilgan');const ti=new Set();
+    d.tasks.forEach((t,i)=>{if(!t||typeof t!=='object'||typeof t.title!=='string'||!t.title.trim())F((i+1)+'-qayd buzilgan yoki nomi yoʻq');
+      const due=t.due==null?'':String(t.due);if(due&&!(/^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(due)&&okDate(due.slice(0,10))&&+due.slice(11,13)<24&&+due.slice(14)<60))F('“'+t.title.trim().slice(0,20)+'” qaydining vaqti notoʻgʻri');
+      const id=typeof t.id==='string'&&OK_ID.test(t.id)&&!ti.has(t.id)?t.id:'t'+rid()+i;ti.add(id);
+      T.push({id,title:t.title.trim().slice(0,200),pri:['u','i','l'].includes(t.pri)?t.pri:'l',done:!!t.done,doneAt:Number(t.doneAt)||0,due,notify:!!(t.notify&&due),notified:!!t.notified,created:Number(t.created)||0})})}
+  const O=Array.isArray(d.order)?[...new Set(d.order.map(x=>typeof x==='string'&&Object.prototype.hasOwnProperty.call(map,x)?map[x]:null).filter(Boolean))]:[];
+  const st=d.settings&&typeof d.settings==='object'?d.settings:{};
+  return{H,L,P,N,T,O,when:typeof d.exported==='string'?d.exported.slice(0,10).replace(/[^0-9-]/g,''):'',set:{sort:['status','manual','time','alpha'].includes(st.sort)?st.sort:'time',theme:st.theme==='light'?'light':'dark',focus:Math.min(300,Math.max(1,Number(st.focus)||25)),brk:Math.min(60,Math.max(0,isFinite(Number(st.brk))?Number(st.brk):5))}}
+}
+function importDlg(){
+  modal(`<h2>Ma’lumotlarni import qilish</h2><div class="sub">Oldin eksport qilingan zaxira faylini (.json) tanlang.</div>
+  <div class="row"><button class="bt" id="pf">Fayl tanlash</button></div><input type="file" id="fi" accept=".json,application/json,text/plain" hidden>
+  <label>Yoki zaxira matnini shu yerga qoʻying</label><textarea id="ta" aria-label="Zaxira matni" spellcheck="false"></textarea>
+  <div class="row"><button class="bt g2" id="pt">Tekshirish</button><button class="bt g2" id="x">Yopish</button></div><div id="msg" class="sub" style="color:var(--rd);margin-top:8px;min-height:18px"></div>`,()=>{
+    const bad=t=>{$('#msg').textContent='Import muvaffaqiyatsiz: '+t+'. Hech narsa oʻzgartirilmadi.'},go=txt=>{let d;
+      try{d=JSON.parse(txt)}catch(e){return bad('fayl JSON formatida emas')}
+      try{confirmImport(cleanBackup(d))}catch(e){bad(e&&e.message?e.message:'fayl buzilgan')}};
+    $('#x').onclick=close;$('#pf').onclick=()=>$('#fi').click();
+    $('#fi').onchange=e=>{const f=e.target.files[0];if(!f)return;if(f.size>20e6)return bad('fayl juda katta');const r=new FileReader();r.onload=()=>go(String(r.result));r.onerror=()=>bad('faylni oʻqib boʻlmadi');r.readAsText(f)};
+    $('#pt').onclick=()=>{const t=$('#ta').value.trim();t?go(t):$('#msg').textContent='Avval fayl tanlang yoki matnni qoʻying.'}})}
+function confirmImport(C){
+  modal(`<h2>Zaxira topildi</h2><div class="sub">Fayl${C.when?' ('+C.when+')':''}: ${C.H.length} ta odat, ${nLog(C.L)} ta kunlik yozuv, ${C.P.length} ta Pomidor mashgʻuloti, ${C.T.length} ta qayd.<br>Hozir telefonda: ${S.habits.length} ta odat.</div>
+  <div class="sub" style="margin-top:12px;color:var(--tx)">Birlashtirish — hozirgilar saqlanadi, fayldan yetishmayotgan odat va kunlar qoʻshiladi. Bir xil odat va bir xil kun takrorlanmaydi.<br>Almashtirish — hozirgi ma’lumotlar oʻchib, fayldagilari qoladi.</div>
+  <div class="row"><button class="bt" id="i1">Birlashtirish</button><button class="bt r" id="i2">Almashtirish</button></div><div class="row" style="margin-top:8px"><button class="bt g2" id="i0">Bekor qilish</button></div>`,()=>{
+    $('#i0').onclick=close;
+    const done=(ok,t)=>modal(`<h2>${ok?'Import muvaffaqiyatli':'Import muvaffaqiyatsiz'}</h2><div class="sub" style="margin-top:8px;color:var(--tx);font-size:15px">${t}</div><div class="row"><button class="bt" id="ok">Yopish</button></div>`,()=>$('#ok').onclick=close);
+    const run=(fn,msg)=>{const snap=JSON.stringify(S);try{const t=fn();if(S.timer&&!S.habits.find(h=>h.id===S.timer.hid))S.timer=null;save();render();done(true,t)}catch(e){S=JSON.parse(snap);render();done(false,'Ma’lumotlaringiz oʻzgarmadi.')}};
+    $('#i2').onclick=()=>modal(`<h2>Haqiqatan almashtirasizmi?</h2><div class="sub" style="margin-top:8px;color:var(--tx);font-size:15px">Hozirgi ${S.habits.length} ta odat, ${nLog(S.logs)} ta kunlik yozuv va ${S.sessions.length} ta Pomidor mashgʻuloti oʻchib ketadi. Buni qaytarib boʻlmaydi.</div><div class="row"><button class="bt r" id="y1">Ha, almashtirish</button><button class="bt g2" id="y0">Bekor qilish</button></div>`,()=>{
+      $('#y0').onclick=()=>confirmImport(C);
+      $('#y1').onclick=()=>run(()=>{S.habits=C.H;S.logs=C.L;S.notes=C.N;S.tasks=C.T;S.order=C.O;S.sessions=C.P;S.set=C.set;return 'Almashtirildi: '+C.H.length+' ta odat tiklandi.'})});
+    $('#i1').onclick=()=>run(()=>{let na=0,nd=0,nc=0,ns=0,nn=0,nt=0;const bi={},bn={},mp={};S.habits.forEach(h=>{bi[h.id]=h;bn[nk(h)]=h});
+      C.H.forEach(h=>{let t=bi[h.id]||(h.group?null:bn[nk(h)]);if(t&&!!t.group!==!!h.group)t=null;if(!t){t=Object.assign({},h);if(bi[t.id])t.id=rid();S.habits.push(t);bi[t.id]=t;bn[nk(t)]=t;na++}mp[h.id]=t.id;
+        const src=C.L[h.id]||{},L=S.logs[t.id]=S.logs[t.id]||{};Object.keys(src).forEach(k=>{if(!L[k]){L[k]=src[k];nd++}else if(L[k].s!==src[k].s||L[k].v!==src[k].v)nc++});const sn=(C.N&&C.N[h.id])||{};if(!S.notes)S.notes={};const tn=S.notes[t.id]||{};Object.keys(sn).forEach(k=>{if(!tn[k]){tn[k]=sn[k];nn++}});if(Object.keys(tn).length)S.notes[t.id]=tn});
+      const sk=new Set(S.sessions.map(x=>x.hid+'|'+x.ts+'|'+x.min));C.P.forEach(x=>{const hid=mp[x.hid],q=hid+'|'+x.ts+'|'+x.min;if(hid&&!(x.ts&&sk.has(q))){S.sessions.push(Object.assign({},x,{hid}));sk.add(q);ns++}});
+      const tk=new Set(TK().map(t=>t.id));C.T.forEach(t=>{if(!tk.has(t.id)&&!TK().some(x=>x.title===t.title&&x.due===t.due&&x.pri===t.pri&&x.done===t.done)){S.tasks.push(t);nt++}});
+      return 'Birlashtirildi: '+na+' ta yangi odat, '+nd+' ta yangi kun, '+ns+' ta Pomidor mashgʻuloti qoʻshildi.'+(nn?' '+nn+' ta izoh qoʻshildi.':'')+(nt?' '+nt+' ta qayd qoʻshildi.':'')+(nc?' '+nc+' ta kunda natija ikki joyda farq qildi, hozirgisi saqlandi.':'')})})}
+/* hisobot */
+let RM='w',RO=0;
+function perDays(m,o){const t=today();let a,b;if(m==='w'){a=addD(t,-wd(t)+o*7);b=addD(a,6)}else{a=new Date(t.getFullYear(),t.getMonth()+o,1);b=new Date(t.getFullYear(),t.getMonth()+o+1,0)}
+  const days=[];for(let d=new Date(a);d<=b&&ds(d)<=ds(t);d=addD(d,1))days.push(new Date(d));return{a,b,days}}
+function rstat(days){let n=0,f=0,dn=0;const bd=[],bh={};
+  days.forEach(d=>{let dn_=0,df=0;S.habits.forEach(h=>{if(!sched(h,d))return;const c=get(h,d);if(c&&c.s==='z')return;const I=cellInfo(h,d),v=I.p/100,o=bh[h.id]=bh[h.id]||{n:0,f:0,d:0};
+      dn_++;df+=v;o.n++;o.f+=v;if(I.s==='y'){dn++;o.d++}});n+=dn_;f+=df;bd.push({d,n:dn_,f:df,p:dn_?df/dn_:null})});
+  return{n,f,dn,bd,bh,p:n?f/n:0}}
+function report(){
+  let el=$('#rpv');if(!el){el=document.createElement('div');el.id='rpv';document.body.appendChild(el)}
+  const P=perDays(RM,RO),R=rstat(P.days),Q=rstat(perDays(RM,RO-1).days),pc=v=>Math.round(v*100);
+  const lab=RM==='w'?P.a.getDate()+' '+MN[P.a.getMonth()]+' – '+P.b.getDate()+' '+MN[P.b.getMonth()]:MN[P.a.getMonth()]+' '+P.a.getFullYear();
+  const wb=R.bd.filter(x=>x.n>0).sort((x,y)=>y.p-x.p||y.d-x.d)[0];
+  let bw='';if(RM==='m'){const w={};R.bd.forEach(x=>{const k=ds(addD(x.d,-wd(x.d)));const o=w[k]=w[k]||{n:0,f:0,d:x.d};o.n+=x.n;o.f+=x.f});
+    const b=Object.keys(w).filter(k=>w[k].n).sort((a,c)=>w[c].f/w[c].n-w[a].f/w[a].n)[0];if(b)bw=`<div><b>${pc(w[b].f/w[b].n)}%</b><span>Eng samarali hafta (${pd(b).getDate()}-${MN[pd(b).getMonth()].slice(0,3)}dan)</span></div>`}
+  const dl=R.n&&Q.n?pc(R.p)-pc(Q.p):null,cmp=dl===null?'Oldingi davrda reja boʻlmagan.':`Oldingi ${RM==='w'?'hafta':'oy'}ga nisbatan: <span class="${dl>=0?'up':'dn'}">${dl>0?'+':''}${dl} foiz punkt</span> (oldin ${pc(Q.p)}%)`;
+  const mx=1,bars=R.bd.map(x=>`<div class="${x.n?'':'z'}"><i style="height:${x.n?Math.max(2,x.p*80):2}%"></i>${RM==='w'?DS[wd(x.d)]:(x.d.getDate()%5===1?x.d.getDate():'')}</div>`).join('');
+  const rows=S.habits.filter(h=>R.bh[h.id]).map(h=>{const o=R.bh[h.id];return `<div class="tr0" style="margin-bottom:10px"><span style="width:96px;text-align:left;color:${hc(h)};overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${esc(h.name)}</span><div class="tb"><div class="tf" style="width:${o.f/o.n*100}%;min-width:${o.f?34:0}px;background:${hc(h)}">${pc(o.f/o.n)}%</div><div class="tm" style="font-size:12px">${o.d}/${o.n}</div></div></div>`}).join('');
+  el.innerHTML=`<div class="dv"><div class="dh"><button id="rb" aria-label="Orqaga">←</button><span>Hisobot</span></div><div class="db">
+  <div class="seg" style="display:flex;gap:8px"><button class="chip ${RM==='w'?'on':''}" data-rm="w">Hafta</button><button class="chip ${RM==='m'?'on':''}" data-rm="m">Oy</button></div>
+  <div class="rh"><button class="ib" id="rp0" aria-label="Oldingi" style="width:36px;height:36px;font-size:20px">‹</button><span style="text-align:center;font-weight:600;font-size:15px">${lab}</span><button class="ib" id="rp1" aria-label="Keyingi" ${RO>=0?'disabled style="opacity:.3;width:36px;height:36px;font-size:20px"':'style="width:36px;height:36px;font-size:20px"'}>›</button></div>
+  ${!S.habits.length?'<div class="empty">Hisobot uchun odat qoʻshing.</div>':`<div class="st"><div><b>${R.n?pc(R.p)+'%':'—'}</b><span>Rejaga nisbatan bajarilish</span></div><div><b>${R.dn} / ${R.n}</b><span>Toʻliq bajarilgan / rejalashtirilgan</span></div>
+  <div><b>${wb&&wb.p>0?pc(wb.p)+'%':'—'}</b><span>Eng samarali kun${wb&&wb.p>0?' ('+wb.d.getDate()+'-'+MN[wb.d.getMonth()].slice(0,3)+')':''}</span></div>${bw||`<div><b>${R.bd.filter(x=>x.n).length}</b><span>Hisobga olingan kunlar</span></div>`}</div>
+  <div class="dl" style="margin-top:10px;text-align:left">${cmp}</div><div class="sc" style="font-size:16px">Kunlar kesimida</div><div class="rb">${bars}</div>
+  <div class="sc" style="font-size:16px">Odatlar boʻyicha</div>${rows||'<div class="dl">Bu davrda rejalashtirilgan odat yoʻq.</div>'}
+  <div class="dl" style="margin-top:10px;text-align:left">Rejada boʻlmagan va neytral (−) kunlar hisobga olinmaydi. Qisman bajarilish miqdoriga mutanosib hisoblanadi.</div>`}</div></div>`;
+  $('#rb').onclick=()=>el.remove();$('#rp0').onclick=()=>{RO--;report()};$('#rp1').onclick=()=>{if(RO<0){RO++;report()}};
+  el.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{RM=b.dataset.rm;RO=0;report()})}
+function seed(){
+  const t=today(),key=ds(t),mk=(n,u,g,d,color,time='')=>({id:'h'+Math.random().toString(36).slice(2,9),name:n,unit:u,goal:g,days:d||[0,1,2,3,4,5,6],time,color});
+  // Namunaviy odatlarni qayta-qayta bosganda bir xil nomdagi namunalar takrorlanmasin.
+  const has=n=>S.habits.some(h=>h.name===n);
+  const add=(h,logs={})=>{S.habits.push(h);S.logs[h.id]=logs;return h};
+
+  // 1. Miqdor bilan kuzatiladigan oddiy odat; eslatmasiz.
+  if(!has('Suv ichish')){
+    const h=mk('Suv ichish','stakan',8,null,'teal');
+    const L={}; for(let i=6;i>=1;i--){const d=ds(addD(t,-i));L[d]={s:i%3===0?'y':'p',v:i%3===0?8:4};}
+    L[key]={s:'p',v:4}; add(h,L);
+  }
+
+  // 2. Kichik odatlardan tashkil topgan guruh; ertalabki eslatma yoqilgan.
+  if(!has('Ertalabki tartib')){
+    const h={id:'g'+Math.random().toString(36).slice(2,9),name:'Ertalabki tartib',unit:'',goal:0,days:[0,1,2,3,4,5,6],time:'07:00',color:'violet',group:true,subs:['Yotoqni yigʻish','Yuz-qoʻlni yuvish','Kun rejasini koʻrish'].map(n=>({id:'s'+Math.random().toString(36).slice(2,7),name:n}))};
+    const L={};for(let i=6;i>=1;i--){const d=ds(addD(t,-i)),count=i%4===0?3:i%3===0?1:2,dd={};h.subs.slice(0,count).forEach(z=>dd[z.id]=1);L[d]={s:count===3?'y':'p',v:0,d:dd};}
+    const dd={};h.subs.slice(0,2).forEach(z=>dd[z.id]=1);L[key]={s:'p',v:0,d:dd};add(h,L);
+  }
+
+  // 3. Biologiyani oʻrganish: soat bilan hisoblanadi va eslatmasi bor.
+  if(!has('Biologiya oʻrganish')){
+    const h=mk('Biologiya oʻrganish','soat',2,null,'blue','19:00'),L={};
+    for(let i=6;i>=1;i--){const d=ds(addD(t,-i)),v=[1,2,1.5,0.5,2,1][i%6];L[d]={s:v>=2?'y':v>0?'p':'x',v};}
+    L[key]={s:'p',v:1};add(h,L);
+  }
+
+  // 4. Vaqt bilan oʻlchanadigan odat; bugungi katakchaga namuna izohi qoʻshiladi.
+  if(!has('Kitob oʻqish')){
+    const h=mk('Kitob oʻqish','daqiqa',20,null,'pink'),L={};
+    for(let i=6;i>=1;i--){const d=ds(addD(t,-i)),v=i%2?20:10;L[d]={s:v===20?'y':'p',v};}
+    L[key]={s:'y',v:20};add(h,L);setNote(h.id,key,'Bugun 20 daqiqa kitob oʻqidim.');
+  }
+
+  // 5. Oddiy, miqdorsiz odat; kechki eslatmasiz emas, eslatmasi yoqilgan.
+  if(!has('Xonani tartibga keltirish')){
+    const h=mk('Xonani tartibga keltirish','',0,[0,1,2,3,4,5,6],'orange','20:30'),L={};
+    for(let i=6;i>=1;i--){const d=ds(addD(t,-i));L[d]={s:i%3===0?'y':'x',v:0};}
+    L[key]={s:'x',v:0};add(h,L);
+  }
+  save();
+}
+/* main */
+function render(){
+  applyTheme();$('#n0').className=tab==='task'?'on':'';$('#n1').className=tab==='main'?'on':'';$('#n2').className=tab==='pomo'?'on':'';
+  $('#ttl').textContent=tab==='main'?'Odatlar':tab==='task'?'Qaydlar':'Pomidor';$('#add').style.display=tab==='pomo'?'none':'';$('#srt').style.display=tab==='main'?'':'none';
+  $('#app').innerHTML=tab==='main'?vMain():tab==='task'?vTask():vPomo();bind();if(tab==='task')tbind();if(DET)detailView();wakeSync();
+  if(tab==='main'&&first){first=false}
+}
+function vMain(){
+  let mini=S.timer?`<div class="mini" id="gp"><span>${S.timer.phase==='focus'?'Mashgʻulot':'Tanaffus'} davom etmoqda</span><b id="mt">${fmt(left())}</b></div>`:'';
+  if(!S.habits.length)return `<div class="empty">Hozircha odat yoʻq.<br>Yuqoridagi «+» orqali qoʻshing yoki sinab koʻrish uchun namunaviy odatlarni yuklang.<div class="row" style="justify-content:center"><button class="bt" id="sd" style="flex:none">Namunaviy odatlar</button></div></div>`;
+  const t=today(),days=[...Array(DAYS)].map((_,i)=>addD(t,-i));
+  let h=mini+`<div style="overflow-x:auto"><div class="g" style="grid-template-columns:minmax(96px,32vw) repeat(${DAYS},38px)"><div class="n" style="height:32px;line-height:32px;border:0;cursor:default"></div>`;
+  h+=days.map((d,i)=>`<div class="h ${i===0?'t':''}">${DN[wd(d)]}<br>${d.getDate()}</div>`).join('');
+  sortedHabits().forEach(x=>{const col=hc(x);h+=`<div class="n" data-d="${x.id}" style="color:${col}">${esc(x.name)}</div>`+days.map(d=>{const I=cellInfo(x,d),s=I.s,f=I.f;return `<div class="c" data-c="${x.id}|${ds(d)}" role="button" aria-label="${esc(x.name)}, ${ds(d)}${x.unit||x.group?', bajarilish '+Math.round(I.p)+'%':''}" style="--hc:${col};--f:${f}%"><span class="${s}">${SY[s]}</span>${!x.group&&gn(x.id,ds(d))?'<i class="nd"></i>':''}</div>`}).join('')});
+  return h+`</div></div><div class="hint">Oldingi kunlarni koʻrish uchun jadvalni oʻngga suring. Katakni bosib natijani kiriting, odat nomini bosib tafsilotlarni oching.${S.set.sort==='manual'?' Tartibni oʻzgartirish uchun odat nomini bosib turing va yuqoriga yoki pastga suring.':''}</div>`;
+}
+/* cell dialog */
+function setSub(hid,k,sid,on){
+  const h=S.habits.find(x=>x.id===hid),L=S.logs[hid]=S.logs[hid]||{},e=L[k]=L[k]||{s:'x',v:0,d:{}};e.d=e.d||{};
+  if(on)e.d[sid]=1;else delete e.d[sid];
+  const kk=h.subs.filter(z=>e.d[z.id]).length;if(!kk)delete L[k];else{e.s=kk===h.subs.length?'y':'x';e.v=0}
+  save();return kk===h.subs.length}
+function groupDlg(hid,k){
+  const h=S.habits.find(x=>x.id===hid),d=pd(k),past=k<ds(today()),dd=((S.logs[hid]||{})[k]||{}).d||{},n=h.subs.length,kk=h.subs.filter(z=>dd[z.id]).length;
+  modal(`<h2>${esc(h.name)}</h2><div class="sub">${d.getDate()}-${MN[d.getMonth()]} · ${kk}/${n} bajarildi</div>
+  <div class="gl" style="margin-top:6px;--ac:${hc(h)}">${h.subs.map(z=>`<button data-g="${z.id}" role="checkbox" aria-checked="${!!dd[z.id]}" class="gr"><span class="gb ${dd[z.id]?'on':''}">${dd[z.id]?'✓':''}</span>${esc(z.name)}</button>`).join('')}</div>
+  <div class="row"><button class="bt" id="gd">Tayyor</button></div>`,()=>{
+    $('#gd').onclick=close;
+    document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const sid=b.dataset.g,on=!dd[sid];
+      const apply=()=>{const full=setSub(hid,k,sid,on);render();groupDlg(hid,k);if(full)celebrate(hid,k)};
+      if(past&&on)ask2(hid,k,['Oʻzingizni aldamayapsizmi?','Bu odatni haqiqatdan ham bajardingizmi?'],'Ha, bajardim',apply);
+      else if(past)ask2(hid,k,['Eski natijani oʻzgartirasizmi?','Oʻtgan kundagi natija oʻzgaradi.'],'Ha, oʻzgartirish',apply);
+      else apply()})})}
+const gn=(hid,k)=>(S.notes&&S.notes[hid]&&S.notes[hid][k])||'';
+function setNote(hid,k,txt){const t=String(txt||'').trim().slice(0,500);if(!S.notes)S.notes={};
+  if(t)(S.notes[hid]=S.notes[hid]||{})[k]=t;else if(S.notes[hid]){delete S.notes[hid][k];if(!Object.keys(S.notes[hid]).length)delete S.notes[hid]}save()}
+function ask2(hid,k,m,yes,fn){modal(`<h2>${m[0]}</h2><div class="sub" style="margin-top:8px;color:var(--tx);font-size:15px">${m[1]}</div><div class="row"><button class="bt" id="pa">${yes}</button><button class="bt g2" id="pb">Bekor qilish</button></div>`,()=>{$('#pa').onclick=fn;$('#pb').onclick=()=>cellDlg(hid,k)})}
+function celebrate(hid,k){
+  hap('success');const rm=matchMedia('(prefers-reduced-motion:reduce)').matches,els=[...document.querySelectorAll(`[data-c="${hid}|${k}"]`)];
+  if(DET===hid)els.push(...document.querySelectorAll(`#dt [data-k="${k}"]`));
+  els.forEach(e=>{e.classList.remove('fx');void e.offsetWidth;e.classList.add('fx');
+    if(!rm)for(let i=0;i<6;i++){const b=document.createElement('b');b.className='pt';b.style.setProperty('--a',i*60+15+'deg');e.appendChild(b)}
+    setTimeout(()=>{e.classList.remove('fx');e.querySelectorAll('.pt').forEach(p=>p.remove())},700)})}
+function cellDlg(hid,k){
+  const h=S.habits.find(x=>x.id===hid);if(!h)return;if(h.group)return groupDlg(hid,k);const d=pd(k),c=(S.logs[hid]||{})[k]||{},u=h.unit;
+  modal(`<h2>${esc(h.name)}</h2><div class="sub">${d.getDate()}-${MN[d.getMonth()]}${u&&h.goal?' · maqsad: '+fv(h,h.goal):''}</div>
+  ${u?`<label>Qancha bajarildi?</label><div class="r2"><input type="number" id="v" inputmode="decimal" min="0" step="any" value="${c.v!=null&&c.v!==''?c.v:''}" placeholder="0"><span style="color:var(--mu)">${u}</span></div>
+  <div class="q">${h.goal?[.25,.5,1].map(f=>`<button data-q="${num(h.goal*f)}">${num(h.goal*f)}</button>`).join(''):''}</div>`:''}
+  <label>Izoh (shu odat va shu kun uchun)</label><textarea id="nt" class="nt" maxlength="500" placeholder="Masalan: Bugun vaqtim yetmadi" aria-label="Izoh">${esc(gn(hid,k))}</textarea>
+  <div class="q" style="margin:8px 0 0"><button id="ns">Izohni saqlash</button>${gn(hid,k)?'<button id="nd" style="color:var(--rd)">Izohni oʻchirish</button>':''}</div>
+  <div class="m"><button id="by" aria-label="Bajarildi" style="color:${hc(h)}">✓</button><button id="bz" aria-label="Neytral" style="color:${hc(h)}">−</button><button id="bx" aria-label="Bajarilmadi" style="color:var(--mu)">×</button></div>
+  <div class="row"><button class="bt g2" id="cl">${c.s?'Tozalash':'Yopish'}</button></div>`,()=>{
+    document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>$('#v').value=b.dataset.q);
+    const past=k<ds(today()),old=!!c.s,chg=['Eski natijani oʻzgartirasizmi?','Oʻtgan kundagi natija oʻzgaradi.'];
+    const commit=(s,v)=>{(S.logs[hid]=S.logs[hid]||{})[k]={s,v};save();close();render();if(cellInfo(h,d).s==='y')celebrate(hid,k)};
+    const clr=()=>{if(c.s){delete S.logs[hid][k];save()}close();render()};
+    $('#ns').onclick=()=>{setNote(hid,k,$('#nt').value);close();render()};if($('#nd'))$('#nd').onclick=()=>{setNote(hid,k,'');close();render()};
+    const put=s=>{setNote(hid,k,$('#nt').value);const raw=u?$('#v').value:'';let v=raw===''?0:Math.max(0,+raw);if(u&&s!=='y')v=0;
+      if(u&&s==='y'&&!(v>0)){if(past&&old)ask2(hid,k,chg,'Ha, oʻzgartirish',clr);else clr();return}
+      if(past&&s==='y')ask2(hid,k,['Oʻzingizni aldamayapsizmi?','Bu odatni haqiqatdan ham bajardingizmi?'],'Ha, bajardim',()=>commit(s,v));
+      else if(past&&old)ask2(hid,k,chg,'Ha, oʻzgartirish',()=>commit(s,v));
+      else commit(s,v)};
+    $('#by').onclick=()=>{if(u&&$('#v').value===''&&h.goal)$('#v').value=h.goal;put('y')};$('#bz').onclick=()=>put('z');$('#bx').onclick=()=>put('x');
+    $('#cl').onclick=()=>{if(past&&old)ask2(hid,k,chg,'Ha, oʻzgartirish',clr);else clr()}});
+}
+/* details */
+let DET=null,SCM='d';
+const nf=v=>String(num(v)).replace('.',','),MS=['yan','fev','mar','apr','may','iyn','iyl','avg','sen','okt','noy','dek'];
+function detail(hid){DET=hid;SCM='d';detailView()}
+function per(h,a,b){let tg=0,dn=0;for(let d=new Date(a);d<=b;d=addD(d,1)){const c=get(h,d);if(h.group){if(sched(h,d))tg+=h.subs.length;dn+=gk(h,d)}else{if(sched(h,d))tg+=h.unit?h.goal:1;if(c&&c.s==='y')dn+=h.unit?(c.v||0):1}}return[tg,dn]}
+function scoreAll(h){const ks=Object.keys(S.logs[h.id]||{}).sort(),t=today(),m=Math.pow(.5,1/13);let s=0;const o={};
+  for(let d=ks.length?pd(ks[0]):addD(t,-30);d<=t;d=addD(d,1)){const c=get(h,d);if(c?c.s!=='z':sched(h,d))s=s*m+(score(h,d)||0)*(1-m);o[ds(d)]=s}return o}
+function chart(h){
+  const t=today(),all=scoreAll(h),Y=t.getFullYear(),M=t.getMonth();let pts=[];
+  if(SCM==='d')for(let i=13;i>=0;i--){const d=addD(t,-i);pts.push([all[ds(d)]||0,d.getDate()])}
+  else if(SCM==='w')for(let i=11;i>=0;i--){const d=addD(t,-7*i);pts.push([all[ds(d)]||0,d.getDate()])}
+  else for(let i=11;i>=0;i--){const d=i?new Date(Y,M-i+1,0):t;pts.push([all[ds(d)]||0,MS[d.getMonth()]])}
+  const X=i=>44+i*(306/(pts.length-1)),Yy=v=>160-v*140;
+  let g='';for(let p=0;p<=100;p+=20)g+=`<line x1="0" x2="360" y1="${Yy(p/100)}" y2="${Yy(p/100)}" stroke="var(--ln2)"/><text x="4" y="${Yy(p/100)-4}" font-size="11" fill="var(--mu)">${p}%</text>`;
+  const line=pts.map((p,i)=>X(i)+','+Yy(p[0])).join(' ');
+  return `<svg viewBox="0 0 360 185" width="100%" role="img" aria-label="Natija grafigi">${g}<polyline points="${line}" fill="none" stroke="var(--ac)" stroke-width="3" stroke-linejoin="round"/>${pts.map((p,i)=>`<circle cx="${X(i)}" cy="${Yy(p[0])}" r="4.5" fill="var(--ac)"/><text x="${X(i)}" y="178" font-size="11" text-anchor="middle" fill="var(--mu)">${p[1]}</text>`).join('')}</svg>`}
+function detailView(){
+  const h=S.habits.find(x=>x.id===DET);if(!h){DET=null;$('#dt').innerHTML='';return}
+  const o1=$('#dt .db'),st0=o1?o1.scrollTop:0,o2=$('#cal'),sl=o2?o2.scrollLeft:null;
+  const t=today(),Y=t.getFullYear(),M=t.getMonth();
+  const P=[['Bugun',t,t],['Hafta',addD(t,-wd(t)),addD(t,6-wd(t))],['Oy',new Date(Y,M,1),new Date(Y,M+1,0)],['Chorak',new Date(Y,M-M%3,1),new Date(Y,M-M%3+3,0)],['Yil',new Date(Y,0,1),new Date(Y,11,31)]];
+  const tb=P.map(([l,a,b])=>{const[tg,dn]=per(h,a,b),rm=Math.max(0,tg-dn),pc=tg?Math.min(100,dn/tg*100):0;
+    return `<div class="tr0"><span>${l}</span><div class="tb"><div class="tf" style="width:${pc}%;min-width:${dn?36:0}px">${dn?nf(dn):''}</div><div class="tm">${rm?nf(rm):''}</div></div></div>`}).join('');
+  const mon=addD(t,-wd(t)-26*7);let mh='',cells='';
+  for(let w=0;w<27;w++){const m0=addD(mon,w*7);mh+=`<div style="white-space:nowrap">${m0.getDate()<=7?MS[m0.getMonth()]+(m0.getMonth()===0?' '+m0.getFullYear():''):''}</div>`;
+    for(let r=0;r<7;r++){const d=addD(m0,w*0+r);if(d>t){cells+='<div class="cn"></div>';continue}const s=st(h,d),pg=h.group&&s!=='y'&&gk(h,d)>0;cells+=`<div class="${s==='y'?'cy':s==='p'||pg?'cp':''}" data-k="${ds(d)}">${d.getDate()}</div>`}}
+  const ps=S.sessions.filter(s=>s.hid===h.id),pm=ps.reduce((a,s)=>a+s.min,0);
+  const info=[h.group?'Guruh: '+h.subs.length+' ta kichik odat':h.unit?'Maqsad: '+nf(h.goal)+' '+h.unit:'Miqdorsiz',h.days.length===7?'Har kuni':h.days.map(i=>DS[i]).join(', ')].concat(h.time?['⏰ '+h.time]:[]).join('  ·  ');
+  $('#dt').innerHTML=`<div class="dv" style="--ac:${hc(h)}"><div class="dh"><button id="db" aria-label="Orqaga">←</button><span>${esc(h.name)}</span><button id="de" aria-label="Tahrirlash">✎</button><button id="dm" aria-label="Menyu">⋮</button></div>
+  <div class="db"><div class="dl" style="color:var(--ac);font-size:14px">${info}</div><div class="dl">Ketma-ket: ${streak(h)} kun · 30 kunda: ${rate(h)}% · Pomidor: ${ps.length} marta, ${pm>=60?Math.floor(pm/60)+' soat '+pm%60+' daqiqa':pm+' daqiqa'}</div>
+  <div class="sc">Maqsad</div>${tb}
+  <div class="sc">Natija<select id="sm" aria-label="Davr"><option value="d" ${SCM==='d'?'selected':''}>Kun</option><option value="w" ${SCM==='w'?'selected':''}>Hafta</option><option value="m" ${SCM==='m'?'selected':''}>Oy</option></select></div><div id="ch">${chart(h)}</div>
+  <div class="sc">Kalendar</div><div class="cw"><div class="cwl">${DN.map(x=>`<div>${x[0]+x.slice(1).toLowerCase()}</div>`).join('')}</div><div class="cs" id="cal"><div class="cm">${mh}</div><div class="cg">${cells}</div></div></div>
+  <div class="dl" style="margin-top:8px">Natijani oʻzgartirish uchun kunni bosing.</div></div></div>`;
+  $('#db').onclick=()=>{DET=null;$('#dt').innerHTML=''};$('#de').onclick=()=>form(h.id);
+  $('#dm').onclick=()=>modal(`<div class="mn"><button id="m1">Tahrirlash</button><button id="m2" style="color:var(--rd)">Oʻchirish</button></div><div class="row"><button class="bt g2" id="m0">Yopish</button></div>`,()=>{$('#m0').onclick=close;$('#m1').onclick=()=>form(h.id);$('#m2').onclick=()=>delH(h.id)});
+  $('#sm').onchange=e=>{SCM=e.target.value;$('#ch').innerHTML=chart(h)};
+  document.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>cellDlg(h.id,b.dataset.k));
+  $('#dt .db').scrollTop=st0;const c=$('#cal');c.scrollLeft=sl===null?c.scrollWidth:sl;
+}
+function delH(id){cf('Bu odat va uning tarixi oʻchirilsinmi?',()=>{S.habits=S.habits.filter(h=>h.id!==id);delete S.logs[id];if(S.notes)delete S.notes[id];if(S.order)S.order=S.order.filter(x=>x!==id);S.sessions=S.sessions.filter(s=>s.hid!==id);if(S.timer&&S.timer.hid===id)S.timer=null;if(DET===id)DET=null;save();close();fclose();$('#dt').innerHTML='';render()})}
+/* form */
+function fpage(t,h,cb){$('#fm').innerHTML=`<div class="dv" style="z-index:7"><div class="dh"><button id="fb" aria-label="Orqaga">←</button><span>${t}</span></div><div class="db" style="padding-bottom:40px">${h}</div></div>`;$('#fb').onclick=fclose;cb&&cb()}
+function fclose(){$('#fm').innerHTML=''}
+function form(id){
+  const x=S.habits.find(h=>h.id===id)||{name:'',unit:'',goal:'',days:[0,1,2,3,4,5,6],time:''};let dys=[...x.days],col=hk(x);const q0=!!x.unit,g0=!!x.group;let subs=(x.subs||[]).map(z=>({id:z.id,name:z.name,old:1}));if(!subs.length)subs=[{id:'s'+rid(),name:''}];
+  close();fpage(id?'Odatni tahrirlash':'Yangi odat',`<label style="margin-top:4px">Nomi</label><input id="fn" maxlength="40" value="${esc(x.name)}" placeholder="Masalan: Kitob oʻqish">
+  <label>Odat turi</label><div class="r2"><label class="tg" style="margin:0;flex:1"><input type="radio" name="ht" id="t1" ${g0?'':'checked'} ${id?'disabled':''}> Oddiy odat</label><label class="tg" style="margin:0;flex:1"><input type="radio" name="ht" id="t2" ${g0?'checked':''} ${id?'disabled':''}> Guruhli odat</label></div>${id?'<div class="sub" style="margin-top:6px">Odat turini keyin oʻzgartirib boʻlmaydi.</div>':''}
+  <label>Odat rangi</label><div class="r2" style="gap:12px"><span class="sw" id="sw" style="background:var(--c-${col})"></span><button type="button" class="chip" id="cp" aria-expanded="false" aria-controls="pal">Rangni tanlash</button></div><div class="pal" id="pal" hidden style="margin-top:12px">${CL.map(k=>`<button data-col="${k}" class="${k===col?'on':''}" style="background:var(--c-${k})" aria-label="${CN[k]}" title="${CN[k]}"></button>`).join('')}</div>
+  <div id="sm" style="display:${g0?'none':'block'}"><label>Miqdor</label><div class="r2"><label class="tg" style="margin:0;flex:1"><input type="checkbox" id="kq" ${q0?'checked':''}> Miqdorli</label><label class="tg" style="margin:0;flex:1"><input type="checkbox" id="kn" ${q0?'':'checked'}> Miqdorsiz</label></div>
+  <div id="qb" style="display:${q0?'block':'none'}"><label>Miqdor birligi</label><select id="fu">${UN.map(u=>`<option ${u===(x.unit||'daqiqa')?'selected':''}>${u}</option>`).join('')}</select>
+  <label>Kunlik maqsad</label><input id="fg" type="number" inputmode="decimal" min="0" step="any" value="${x.goal||''}" placeholder="Masalan: 2"></div></div>
+  <div id="gb2" style="display:${g0?'block':'none'}"><label>Kichik odatlar</label><div id="sl"></div><button type="button" class="chip" id="sa">+ Kichik odat qoʻshish</button><div id="se" class="sub" style="color:var(--rd);margin-top:6px"></div></div>
+  <label>Takrorlanish</label><div class="dw">${DS.map((d,i)=>`<button data-w="${i}" class="${dys.includes(i)?'on':''}">${d}</button>`).join('')}</div>
+  <label>Eslatma vaqti (ixtiyoriy)</label><input id="ft" type="time" value="${x.time||''}">
+  <div class="row"><button class="bt" id="ok">Saqlash</button>${id?'<button class="bt r" id="dl">Oʻchirish</button>':''}<button class="bt g2" id="cx">Bekor</button></div>`,()=>{
+    const sw=q=>{$('#kq').checked=q;$('#kn').checked=!q;$('#qb').style.display=q?'block':'none'};
+    $('#kq').onchange=()=>sw($('#kq').checked);$('#kn').onchange=()=>sw(!$('#kn').checked);
+    document.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{const i=+b.dataset.w;dys=dys.includes(i)?dys.filter(v=>v!==i):[...dys,i];b.classList.toggle('on')});
+    const pal=$('#pal'),cp=$('#cp');cp.onclick=()=>{const o=pal.hidden;pal.hidden=!o;cp.setAttribute('aria-expanded',String(o))};
+    document.querySelectorAll('[data-col]').forEach(b=>b.onclick=()=>{col=b.dataset.col;$('#sw').style.background='var(--c-'+col+')';document.querySelectorAll('[data-col]').forEach(z=>z.classList.toggle('on',z===b));pal.hidden=true;cp.setAttribute('aria-expanded','false')});
+    const tp=g=>{$('#sm').style.display=g?'none':'block';$('#gb2').style.display=g?'block':'none'};$('#t1').onchange=()=>tp(false);$('#t2').onchange=()=>tp(true);
+    const draw=foc=>{$('#sl').innerHTML=subs.map((z,i)=>`<div class="r2" style="margin-bottom:8px"><input data-si="${i}" maxlength="40" value="${esc(z.name)}" placeholder="Masalan: Bomdod" aria-label="Kichik odat nomi"><button type="button" class="sx" data-sr="${i}" aria-label="Kichik odatni oʻchirish">−</button></div>`).join('');
+      document.querySelectorAll('[data-si]').forEach(e=>e.oninput=()=>{subs[+e.dataset.si].name=e.value;e.style.borderColor='';$('#se').textContent=''});
+      document.querySelectorAll('[data-sr]').forEach(b=>b.onclick=()=>{const i=+b.dataset.sr,rm=()=>{subs.splice(i,1);draw()};if(subs[i].old&&id)cf('Bu kichik odat oʻchirilsa, tarixdagi natijalardan ham hisobdan chiqadi. Oʻchirilsinmi?',rm);else rm()});
+      if(foc){const e=document.querySelectorAll('[data-si]');if(e.length)e[e.length-1].focus()}};
+    draw();$('#sa').onclick=()=>{subs.push({id:'s'+rid(),name:''});$('#se').textContent='';draw(true)};
+    $('#cx').onclick=fclose;
+    $('#ok').onclick=()=>{const grp=$('#t2').checked,n=$('#fn').value.trim(),q=!grp&&$('#kq').checked,g=+($('#fg').value||0);
+      if(!n){$('#fn').style.borderColor='var(--rd)';$('#fn').placeholder='Nomini kiriting';return}
+      if(grp){const ne=[...document.querySelectorAll('[data-si]')],nm2=subs.map(z=>z.name.trim().toLowerCase());
+        if(!subs.length){$('#se').textContent='Kamida bitta kichik odat qoʻshing.';return}
+        const bi=nm2.findIndex(v=>!v);if(bi>=0){ne[bi].style.borderColor='var(--rd)';ne[bi].focus();$('#se').textContent='Kichik odat nomi boʻsh boʻlmasin.';return}
+        if(new Set(nm2).size!==nm2.length){$('#se').textContent='Kichik odat nomlari takrorlanmasin.';return}}
+      if(q&&!(g>0)){$('#fg').style.borderColor='var(--rd)';$('#fg').placeholder='Kunlik maqsadni kiriting';return}
+      if(!dys.length){al('Kamida bitta kunni tanlang');return}
+      const o={name:n,unit:q?$('#fu').value:'',goal:q?g:0,days:dys,time:$('#ft').value,color:col,...(grp?{group:true,subs:subs.map(z=>({id:z.id,name:z.name.trim()}))}:{})};
+      if(id)Object.assign(x,o);else S.habits.push(Object.assign({id:'h'+Date.now()},o));if(o.time)ask();save();fclose();render()};
+    if($('#dl'))$('#dl').onclick=()=>delH(id)});
+}
+/* pomodoro */
+const left=()=>{const t=S.timer;return t?(t.endAt?Math.max(0,Math.round((t.endAt-Date.now())/1000)):t.rem):0};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+/* saralash */
+function sortedHabits(){const m=S.set.sort||'time',H=S.habits.map((h,i)=>({h,i}));
+  if(m==='alpha')H.sort((a,b)=>a.h.name.localeCompare(b.h.name,undefined,{sensitivity:'base'})||a.i-b.i);
+  else if(m==='manual'){const p=new Map((S.order||[]).map((id,k)=>[id,k])),g=o=>p.has(o.h.id)?p.get(o.h.id):1e6+o.i;H.sort((a,b)=>g(a)-g(b))}
+  else if(m==='status'){const t=today(),r={y:0,p:1,z:2};H.forEach(o=>{const c=cellInfo(o.h,t).s;o.r=c in r?r[c]:3});H.sort((a,b)=>a.r-b.r||a.i-b.i)}
+  return H.map(o=>o.h)}
+function sortMenu(){const cur=S.set.sort||'time',M=[['status','Holati boʻyicha','Bajarilgan → neytral → bajarilmagan'],['manual','Qoʻlda joylashtirish','Nomni bosib turib, yuqoriga yoki pastga suring'],['time','Qoʻshilgan vaqti boʻyicha','Avval qoʻshilgani birinchi'],['alpha','Alifbo boʻyicha','A dan Z gacha']];
+  modal(`<h2>Saralash</h2><div class="mn" style="margin-top:8px">${M.map(m=>`<button data-sm="${m[0]}"><b style="display:inline-block;width:22px;color:var(--ac)">${cur===m[0]?'✓':''}</b>${m[1]}<div class="sub" style="margin-left:22px">${m[2]}</div></button>`).join('')}</div><div class="row"><button class="bt g2" id="x">Yopish</button></div>`,()=>{
+    $('#x').onclick=close;document.querySelectorAll('[data-sm]').forEach(b=>b.onclick=()=>{S.set.sort=b.dataset.sm;save();close();render();if(S.set.sort==='manual')toast('Odat nomini bosib turing va yuqoriga yoki pastga suring.')})})}
+const DRG={t:null,id:null,on:false,block:false,cur:[],x0:0,y0:0};
+function dgPaint(){DRG.cur.forEach((id,p)=>document.querySelectorAll('[data-d="'+id+'"],[data-c^="'+id+'|"]').forEach(e=>{e.style.order=p+1;e.classList.toggle('drg',id===DRG.id)}))}
+function dgStart(id,x,y){if((S.set.sort||'time')!=='manual'||tab!=='main'||S.habits.length<2)return;clearTimeout(DRG.t);DRG.id=id;DRG.x0=x;DRG.y0=y;DRG.on=false;
+  DRG.t=setTimeout(()=>{DRG.on=true;DRG.cur=sortedHabits().map(h=>h.id);dgPaint();try{navigator.vibrate&&navigator.vibrate(20)}catch(e){}},420)}
+function dgMove(x,y,ev){if(DRG.id==null)return;if(!DRG.on){if(Math.abs(x-DRG.x0)>8||Math.abs(y-DRG.y0)>8){clearTimeout(DRG.t);DRG.id=null}return}
+  if(ev&&ev.cancelable)ev.preventDefault();const hd=document.querySelector('.g .h'),nm=document.querySelector('.g .n[data-d]');if(!hd||!nm)return;
+  const top=hd.getBoundingClientRect().bottom,rh=nm.offsetHeight||36;let i=Math.max(0,Math.min(DRG.cur.length-1,Math.floor((y-top)/rh)));const c=DRG.cur.indexOf(DRG.id);
+  if(i!==c){DRG.cur.splice(c,1);DRG.cur.splice(i,0,DRG.id);dgPaint()}}
+function dgEnd(){clearTimeout(DRG.t);if(DRG.on){S.order=DRG.cur.slice();save();DRG.block=true;setTimeout(()=>{DRG.block=false},400);DRG.on=false;DRG.id=null;render()}else DRG.id=null}
+(()=>{const nm=e=>e.target&&e.target.closest?e.target.closest('.g .n[data-d]'):null;
+  document.addEventListener('touchstart',e=>{const n=nm(e);if(n)dgStart(n.dataset.d,e.touches[0].clientX,e.touches[0].clientY)},{passive:true});
+  document.addEventListener('touchmove',e=>dgMove(e.touches[0].clientX,e.touches[0].clientY,e),{passive:false});
+  document.addEventListener('touchend',dgEnd);document.addEventListener('touchcancel',dgEnd);
+  document.addEventListener('mousedown',e=>{const n=nm(e);if(n&&e.button===0)dgStart(n.dataset.d,e.clientX,e.clientY)});
+  document.addEventListener('mousemove',e=>dgMove(e.clientX,e.clientY,e));document.addEventListener('mouseup',dgEnd);
+  document.addEventListener('contextmenu',e=>{if(nm(e)&&(S.set.sort||'time')==='manual')e.preventDefault()})})();
+/* qaydlar (vazifalar) */
+let TF='a',TS='c';
+const TK=()=>S.tasks||(S.tasks=[]),PL={u:['!','Muhim va shoshilinch'],i:['▲','Muhim, lekin hozir shoshilinch emas'],l:['○','Keyinroq']};
+const dueTxt=d=>{const x=new Date(d);return x.getDate()+'-'+MN[x.getMonth()].slice(0,3)+', '+String(x.getHours()).padStart(2,'0')+':'+String(x.getMinutes()).padStart(2,'0')};
+function toast(m){const e=document.createElement('div');e.className='ts';e.textContent=m;e.onclick=()=>e.remove();document.body.appendChild(e);setTimeout(()=>e.remove(),12000)}
+function vTask(){
+  const all=TK(),act=all.filter(t=>!t.done).length;
+  let L=all.filter(t=>TF==='a'?!t.done:TF==='d'?t.done:true);const o={u:0,i:1,l:2};
+  if(TS==='p')L.sort((a,b)=>o[a.pri]-o[b.pri]||a.created-b.created);else if(TS==='t')L.sort((a,b)=>(a.due?0:1)-(b.due?0:1)||(a.due<b.due?-1:a.due>b.due?1:0)||a.created-b.created);else L.sort((a,b)=>a.created-b.created);
+  const now=Date.now();
+  const rows=L.map(t=>{const od=t.due&&!t.done&&new Date(t.due).getTime()<now;
+    return `<div class="tk ${t.done?'dne':''}"><button class="tc ${t.done?'on':''}" data-tc="${t.id}" aria-label="${t.done?'Bajarilmagan deb belgilash':'Bajarildi deb belgilash'}">${t.done?'✓':''}</button><span class="pq pq-${t.pri}" title="${PL[t.pri][1]}" aria-label="${PL[t.pri][1]}">${PL[t.pri][0]}</span><div class="tt" data-te="${t.id}"><div class="tn">${esc(t.title)}</div>${t.due?`<div class="tmeta ${od?'od':''}">${t.notify?'🔔 ':'⏰ '}${dueTxt(t.due)}</div>`:''}</div></div>`}).join('');
+  return `<div class="tfb"><button class="chip ${TF==='a'?'on':''}" data-tf="a">Faol (${act})</button><button class="chip ${TF==='d'?'on':''}" data-tf="d">Bajarilgan (${all.length-act})</button><button class="chip ${TF==='x'?'on':''}" data-tf="x">Hammasi</button>
+  <select id="tsr" aria-label="Tartiblash"><option value="c" ${TS==='c'?'selected':''}>Qoʻshilgan tartib</option><option value="p" ${TS==='p'?'selected':''}>Muhimlik boʻyicha</option><option value="t" ${TS==='t'?'selected':''}>Muddat boʻyicha</option></select></div>`+
+  (rows||`<div class="empty">${all.length?'Bu filtrda qayd yoʻq.':'Hozircha qayd yoʻq.<br>Yuqoridagi «+» orqali birinchi vazifani qoʻshing.'}</div>`)+
+  `<div class="hint">! — muhim va shoshilinch · ▲ — muhim, shoshilinch emas · ○ — keyinroq. Vazifani tahrirlash uchun nomini bosing.</div>`}
+function tbind(){
+  document.querySelectorAll('[data-tf]').forEach(b=>b.onclick=()=>{TF=b.dataset.tf;render()});
+  $('#tsr').onchange=e=>{TS=e.target.value;render()};
+  document.querySelectorAll('[data-tc]').forEach(b=>b.onclick=()=>{const t=TK().find(x=>x.id===b.dataset.tc);if(!t)return;t.done=!t.done;t.doneAt=t.done?Date.now():0;save();render()});
+  document.querySelectorAll('[data-te]').forEach(b=>b.onclick=()=>taskForm(b.dataset.te))}
+function taskForm(id){
+  const x=TK().find(t=>t.id===id)||{title:'',pri:'l',due:'',notify:false,done:false};let pri=x.pri;
+  const dd=x.due?x.due.slice(0,10):'',tm=x.due?x.due.slice(11,16):'';
+  close();fpage(id?'Qaydni tahrirlash':'Yangi qayd',`<label style="margin-top:4px">Vazifa nomi</label><input id="tt" maxlength="200" value="${esc(x.title)}" placeholder="Masalan: Soat 10:00 da uchrashuv">
+  <label>Muhimlik darajasi</label>${['u','i','l'].map(k=>`<button type="button" class="pk ${pri===k?'on':''}" data-pk="${k}"><b class="pq-${k}">${PL[k][0]}</b>${PL[k][1]}</button>`).join('')}
+  <label class="tg"><input type="checkbox" id="tn" ${x.notify?'checked':''}> Bildirishnoma (sana va vaqt)</label>
+  <div id="tdb" style="display:${x.notify?'block':'none'}"><div class="r2" style="margin-top:8px"><input type="date" id="td" value="${dd}"><input type="time" id="tmm" value="${tm}"></div>
+  <div class="sub" style="margin-top:6px">Eslatma ilova ochiq yoki fonda ishlab turganda keladi. Ilova butunlay yopiq boʻlsa, brauzer kafolat bermaydi.</div></div>
+  ${id?`<label class="tg"><input type="checkbox" id="tdn" ${x.done?'checked':''}> Bajarilgan</label>`:''}
+  <div id="te" class="sub" style="color:var(--rd);min-height:16px;margin-top:8px"></div>
+  <div class="row"><button class="bt" id="ok">Saqlash</button>${id?'<button class="bt r" id="dl">Oʻchirish</button>':''}<button class="bt g2" id="cx">Bekor qilish</button></div>`,()=>{
+    document.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{pri=b.dataset.pk;document.querySelectorAll('[data-pk]').forEach(z=>z.classList.toggle('on',z===b))});
+    $('#tn').onchange=()=>{$('#tdb').style.display=$('#tn').checked?'block':'none';if($('#tn').checked)ask()};
+    $('#cx').onclick=fclose;
+    $('#ok').onclick=()=>{const n=$('#tt').value.trim(),nf=$('#tn').checked,d=$('#td').value,m=$('#tmm').value,er=t=>{$('#te').textContent=t};
+      if(!n){$('#tt').style.borderColor='var(--rd)';return er('Vazifa nomini kiriting.')}
+      let due='';if(nf){if(!d||!m)return er('Bildirishnoma uchun sana va vaqtni kiriting.');due=d+'T'+m;if(new Date(due).getTime()<=Date.now()&&due!==x.due)return er('Bu vaqt allaqachon oʻtib ketgan.')}
+      if(id){const chg=due!==x.due||nf!==x.notify;Object.assign(x,{title:n,pri,due,notify:nf});if(chg)x.notified=false;const dn=$('#tdn').checked;if(dn!==x.done){x.done=dn;x.doneAt=dn?Date.now():0}}
+      else TK().push({id:'t'+rid(),title:n,pri,done:false,doneAt:0,due,notify:nf,notified:false,created:Date.now()});
+      save();fclose();render()};
+    if($('#dl'))$('#dl').onclick=()=>cf('Bu qayd oʻchirilsinmi?',()=>{S.tasks=TK().filter(t=>t.id!==id);save();fclose();render()})})}
+function taskTick(){let ch=false;const now=Date.now();TK().forEach(t=>{if(t.notify&&t.due&&!t.done&&!t.notified&&new Date(t.due).getTime()<=now){t.notified=true;ch=true;ding('Qayd: '+t.title);toast('Qayd: '+t.title)}});if(ch){save();if(tab==='task'&&!$('#fm .dv'))render()}}
+setInterval(taskTick,15000);
+(()=>{let x0=0,y0=0;const a=$('#app');a.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  a.addEventListener('touchend',e=>{if(tab==='main'||$('#md .ov')||$('#fm .dv')||$('#dt .dv'))return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>70&&Math.abs(dy)<40){if(tab==='task'&&dx<0){tab='main';render()}else if(tab==='pomo'&&dx>0){tab='main';render()}}},{passive:true})})();
+let WL=null,WS='',WB=false;
+const wlMsg=()=>!S.timer||!S.timer.endAt?'':WS==='on'?'Ekran taymer davomida oʻchmaydi.':WS==='unsupported'?'Bu brauzer ekranni ochiq ushlab turishni qoʻllamaydi. Taymer ishlayotganda ekran oʻchib qolishi mumkin: telefon sozlamalarida ekran vaqtini uzaytiring.':WS==='fail'?'Ekranni ochiq ushlab turib boʻlmadi (ruxsat berilmadi yoki quvvat tejash rejimi yoqilgan). Ekran oʻchib qolishi mumkin.':'';
+const wlUpd=()=>{const e=$('#wl');if(e)e.textContent=wlMsg()};
+async function wakeOn(){if(WL||WB||document.visibilityState!=='visible')return;
+  if(!('wakeLock' in navigator)){WS='unsupported';wlUpd();return}
+  WB=true;try{WL=await navigator.wakeLock.request('screen');WS='on';WL.addEventListener('release',()=>{WL=null})}catch(e){WL=null;WS='fail'}WB=false;wlUpd()}
+function wakeOff(){const w=WL;WL=null;WS='';try{w&&w.release()}catch(e){}}
+const wakeSync=()=>{S.timer&&S.timer.endAt?wakeOn():wakeOff()};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')wakeSync()});
+function vPomo(){
+  const t=S.timer,hs=S.habits;
+  if(!t){
+    if(!hs.length)return `<div class="empty">Avval Asosiy boʻlimda odat qoʻshing.</div>`;
+    if(!selH||!hs.find(x=>x.id===selH))selH=hs[0].id;const f=S.set.focus,b=S.set.brk,P=[25,40,60,90],B=[0,5,10,15];
+    return `<div class="pm"><label style="margin-top:4px">Odat</label><select id="sel">${hs.map(x=>`<option value="${x.id}" ${x.id===selH?'selected':''}>${esc(x.name)}</option>`).join('')}</select>
+    <label>Mashgʻulot vaqti, daqiqa</label><div class="q" style="margin-top:0">${P.map(p=>`<button class="chip ${f===p?'on':''}" data-f="${p}">${p}</button>`).join('')}<input type="number" id="cf" min="1" max="300" value="${P.includes(f)?'':f}" placeholder="Oʻzim" style="width:90px;padding:6px 10px"></div>
+    <label>Tanaffus, daqiqa</label><div class="q" style="margin-top:0">${B.map(p=>`<button class="chip ${b===p?'on':''}" data-b="${p}">${p}</button>`).join('')}<input type="number" id="cb" min="0" max="60" value="${B.includes(b)?'':b}" placeholder="Oʻzim" style="width:90px;padding:6px 10px"></div>
+    <div class="big">${fmt(f*60)}</div><div class="bar"><i style="width:0"></i></div><div class="row" style="margin-top:0"><button class="bt" id="go">Boshlash</button></div></div>`;
+  }
+  const l=left(),run=!!t.endAt,h=S.habits.find(x=>x.id===t.hid);
+  return `<div class="pm"><div class="ph" style="margin-top:14px">${t.phase==='focus'?esc(h?h.name:''):'Tanaffus'}</div><div class="big" id="tt">${fmt(l)}</div><div class="bar"><i id="pb" style="width:${(1-l/t.total)*100}%"></i></div><div class="ph" style="margin:-12px 0 14px">${run?'Davom etmoqda':'Toʻxtatilgan'}</div><div class="ph" id="wl" style="margin:0 0 16px;font-size:12px;line-height:1.4">${wlMsg()}</div>
+  <div class="row" style="margin-top:0">${run?'<button class="bt g2" id="ps">Toʻxtatish</button>':'<button class="bt" id="rs">Davom ettirish</button>'}${t.phase==='focus'?'<button class="bt g2" id="fn">Yakunlash</button>':'<button class="bt g2" id="sk">Oʻtkazish</button>'}<button class="bt r" id="cn">Bekor qilish</button></div></div>`;
+}
+function startT(hid,phase,min){S.timer={hid,phase,total:min*60,endAt:Date.now()+min*60000,rem:min*60};save()}
+function ask(){if(TG){if(!WA&&tgv('6.9')&&!((TG.initDataUnsafe||{}).user||{}).allows_write_to_pm){WA=true;try{TG.requestWriteAccess(()=>{})}catch(e){}}return}
+  try{if('Notification' in window&&Notification.permission==='default')Notification.requestPermission()}catch(e){}}
+async function sysNote(m){try{if(TG||!('Notification' in window)||Notification.permission!=='granted')return;
+  const r=navigator.serviceWorker?await navigator.serviceWorker.getRegistration():null;if(r){await r.showNotification('Odatlar',{body:m,tag:'odat-'+Date.now()});return}new Notification('Odatlar',{body:m})}catch(e){}}
+function ding(m){if(TG)hap('warning');else sysNote(m);try{const a=new(window.AudioContext||window.webkitAudioContext)();[0,.25,.5].forEach(o=>{const s=a.createOscillator(),g=a.createGain();s.connect(g);g.connect(a.destination);s.frequency.value=880;g.gain.setValueAtTime(.2,a.currentTime+o);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+o+.2);s.start(a.currentTime+o);s.stop(a.currentTime+o+.22)})}catch(e){}
+  try{if(!TG&&navigator.vibrate)navigator.vibrate([200,100,200])}catch(e){}}
+function finish(auto){
+  const t=S.timer;if(!t)return;
+  if(t.phase==='break'){S.timer=null;save();if(auto)ding('Tanaffus tugadi');render();return}
+  const mins=auto?Math.round(t.total/60):Math.round((t.total-left())/60);S.timer=null;save();if(auto)ding('Mashgʻulot tugadi. Natijani belgilang.');
+  const h=S.habits.find(x=>x.id===t.hid);render();if(mins<1||!h)return;
+  const tu=h.unit==='daqiqa'||h.unit==='soat';
+  modal(`<h2>${auto?'Mashgʻulot tugadi':'Mashgʻulotni yakunlash'}</h2><div class="sub">${esc(h.name)} — ${mins} daqiqa</div>${tu?`<label class="tg"><input type="checkbox" id="mk" checked> Bugungi natijaga ${mins} daqiqa qoʻshish</label>`:''}
+  <div class="row"><button class="bt" id="sv">Saqlash</button>${S.set.brk>0?'<button class="bt g2" id="sb">Saqlash, tanaffus</button>':''}</div>`,()=>{
+    const sv=br=>{S.sessions.push({hid:t.hid,date:ds(today()),min:mins,ts:Date.now()});
+      if(tu&&$('#mk').checked){const L=S.logs[h.id]=S.logs[h.id]||{},k=ds(today()),c=L[k]||{s:'y',v:0};if(c.s!=='y')c.v=0;c.v=num((c.v||0)+(h.unit==='soat'?mins/60:mins));if(c.s!=='y')c.s='y';L[k]=c}
+      if(br)startT(t.hid,'break',S.set.brk);save();close();render()};
+    $('#sv').onclick=()=>sv(false);if($('#sb'))$('#sb').onclick=()=>sv(true)});
+}
+setInterval(()=>{const t=S.timer;if(!t||!t.endAt)return;const l=left();
+  if($('#tt')){$('#tt').textContent=fmt(l);$('#pb').style.width=(1-l/t.total)*100+'%'}if($('#mt'))$('#mt').textContent=fmt(l);
+  document.title=fmt(l)+' · Odatlar';if(l<=0){document.title='Odatlar';finish(true)}},400);
+/* modal + bind */
+function modal(h,cb){$('#md').innerHTML=`<div class="ov"><div class="sh">${h}</div></div>`;cb&&cb()}
+function close(){$('#md').innerHTML=''}
+function bind(){
+  document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{const[i,k]=b.dataset.c.split('|');cellDlg(i,k)});
+  document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{if(DRG.block)return;detail(b.dataset.d)});
+  const v=(id,f)=>{const e=$(id);if(e)e.onclick=f};
+  v('#sd',()=>{seed();render()});v('#gp',()=>{tab='pomo';render()});
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{S.set.focus=+b.dataset.f;save();render()});
+  document.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{S.set.brk=+b.dataset.b;save();render()});
+  if($('#sel'))$('#sel').onchange=e=>{selH=e.target.value};
+  if($('#cf'))$('#cf').onchange=e=>{S.set.focus=Math.min(300,Math.max(1,+e.target.value||25));save();render()};
+  if($('#cb'))$('#cb').onchange=e=>{S.set.brk=Math.min(60,Math.max(0,+e.target.value||0));save();render()};
+  v('#go',()=>{ask();startT(selH,'focus',S.set.focus);render()});
+  v('#ps',()=>{const t=S.timer;t.rem=left();t.endAt=null;save();render()});
+  v('#rs',()=>{const t=S.timer;t.endAt=Date.now()+t.rem*1000;save();render()});
+  v('#fn',()=>finish(false));v('#sk',()=>{S.timer=null;save();render()});
+  v('#cn',()=>cf('Taymer bekor qilinsinmi? Vaqt saqlanmaydi.',()=>{S.timer=null;save();document.title='Odatlar';render()}));
+}
+let lastR='';setInterval(()=>{const n=new Date(),k=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+ds(n);if(k===lastR)return;lastR=k;
+  S.habits.forEach(h=>{if(h.time&&k.startsWith(h.time)&&sched(h,n)&&!get(h,n))ding('Eslatma: '+h.name)})},15000);
+/* Telegram: Orqaga tugmasi va asosiy ekranga qoʻshish */
+let HS=TG?'unknown':'unsupported',BB=null;
+function tgBack(){if(!tgv('6.1'))return;const on=!!($('#md .ov')||$('#fm .dv')||$('#rpv')||$('#dt .dv')||tab!=='main');if(on===BB)return;BB=on;try{on?TG.BackButton.show():TG.BackButton.hide()}catch(e){}}
+function tgBackClick(){if($('#md .ov'))close();else if($('#fm .dv'))fclose();else if($('#rpv'))$('#rpv').remove();else if($('#dt .dv')){DET=null;$('#dt').innerHTML=''}else if(tab!=='main'){tab='main';render()}tgBack()}
+function homeAdd(){if(!tgv('8.0'))return al('Bu imkoniyat uchun Telegram ilovasini yangilang.');
+  if(HS==='unsupported')return al('Bu qurilmadagi Telegram asosiy ekranga qoʻshishni qoʻllamaydi. Telefondagi Telegram’dan urinib koʻring.');
+  try{TG.addToHomeScreen()}catch(e){al('Asosiy ekranga qoʻshib boʻlmadi.')}}
+function hsTip(){const e=document.createElement('div');e.className='ts';e.innerHTML='📲 Ilovani telefon asosiy ekraniga qoʻshish uchun shu yerni bosing.<div class="sub">Keyinroq ham mumkin: ⋮ menyusi</div>';e.onclick=()=>{e.remove();homeAdd()};document.body.appendChild(e);setTimeout(()=>e.remove(),12000)}
+if(TG){
+  if(tgv('6.1')){try{TG.BackButton.onClick(tgBackClick)}catch(e){}new MutationObserver(tgBack).observe(document.body,{childList:true,subtree:true})}
+  if(tgv('8.0')){const want=/[?&]home=1/.test(location.search)||(TG.initDataUnsafe||{}).start_param==='home';
+    try{TG.onEvent('homeScreenAdded',()=>{HS='added';toast('Ilova telefon asosiy ekraniga qoʻshildi ✓')})}catch(e){}
+    try{TG.checkHomeScreenStatus(s=>{HS=s||'unknown';
+      if(want){if(HS==='added')toast('Ilova allaqachon asosiy ekranda bor ✓');else setTimeout(homeAdd,400)}
+      else if(HS==='missed'){let n=0;try{n=+localStorage.getItem('odatHS')||0;localStorage.setItem('odatHS',n+1)}catch(e){}if(n===1)hsTip()}})}catch(e){}}
+  else HS='unsupported';
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncNow(false)});
+  setInterval(()=>syncNow(false),300000);
+}else if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+render();taskTick();if(S.timer&&S.timer.endAt&&left()<=0)finish(true);if(TG){syncNow(true);tgBack()}
+</script>
+</body>
+</html>
