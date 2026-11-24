@@ -1,9 +1,9 @@
 // Zaxira faylini foydalanuvchining bot chatiga yuborish (POST /api/backup).
-import { json, readBody, rateLimit, tg, tgErr } from '../lib/tg.mjs';
+import { json, readBody, rateLimit, tg, tgErr, safe } from '../lib/tg.mjs';
 
 const MAX = 4_000_000;
 
-export default async req => {
+export default safe(async req => {
   const { body, user, err } = await readBody(req, MAX + 20_000);
   if (err) return err;
   const text = typeof body.text === 'string' ? body.text : '';
@@ -18,6 +18,6 @@ export default async req => {
   fd.append('document', new Blob([text], { type: 'application/json' }), name);
   const r = await tg('sendDocument', fd);
   return r.ok ? json({ ok: true }) : json({ ok: false, err: tgErr(r) }, 502);
-};
+});
 
 export const config = { path: '/api/backup' };
