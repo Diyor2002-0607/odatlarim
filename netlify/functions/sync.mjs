@@ -1,5 +1,5 @@
 // Ilovadagi eslatmalar ro'yxatini serverga saqlaydi (POST /api/sync).
-import { json, readBody, rateLimit, store, userKey, adminChat, sendText } from '../lib/tg.mjs';
+import { json, readBody, rateLimit, store, userKey, adminChat, sendText, safe } from '../lib/tg.mjs';
 
 const str = (v, n) => (typeof v === 'string' ? v.trim().slice(0, n) : '');
 const okId = v => typeof v === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(v);
@@ -27,7 +27,7 @@ export function clean(d) {
   return { tz, off, habits, tasks, timer };
 }
 
-export default async req => {
+export default safe(async req => {
   const { body, user, err } = await readBody(req, 200_000);
   if (err) return err;
   if (!(await rateLimit(user.id, 'sync', 20))) return json({ ok: false, err: 'juda koʻp soʻrov, birozdan keyin' }, 429);
@@ -44,6 +44,6 @@ export default async req => {
     sendText(adminChat(), `Yangi foydalanuvchi ulandi: ${name}${user.username ? ' (@' + user.username + ')' : ''}`).catch(() => {});
   }
   return json({ ok: true });
-};
+});
 
 export const config = { path: '/api/sync' };

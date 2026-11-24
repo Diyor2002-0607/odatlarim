@@ -1,8 +1,8 @@
 // Telegram webhook (POST /api/bot): /start buyrug'iga javob beradi va ilovani ochish tugmasini yuboradi.
 // Soxta so'rovlardan himoya: webhook o'rnatilganda secret_token sifatida bot tokenidan olingan xesh beriladi.
-import { tg, token, webhookSecret, siteUrl } from '../lib/tg.mjs';
+import { tg, token, webhookSecret, siteUrl, safe } from '../lib/tg.mjs';
 
-export default async req => {
+export default safe(async req => {
   if (req.method !== 'POST' || !token()) return new Response('', { status: 404 });
   if (req.headers.get('x-telegram-bot-api-secret-token') !== webhookSecret()) return new Response('', { status: 403 });
   let up;
@@ -21,6 +21,6 @@ export default async req => {
     await tg('sendMessage', { chat_id: m.chat.id, text: 'Ilovani ochish uchun /start yuboring.' });
   }
   return new Response('ok');
-};
+});
 
 export const config = { path: '/api/bot' };

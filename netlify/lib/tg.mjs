@@ -3,8 +3,8 @@
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { getStore } from '@netlify/blobs';
 
-export const token = () => process.env.TELEGRAM_BOT_TOKEN || '';
-export const adminChat = () => process.env.TELEGRAM_CHAT_ID || '';
+export const token = () => (process.env.TELEGRAM_BOT_TOKEN || '').trim();
+export const adminChat = () => (process.env.TELEGRAM_CHAT_ID || '').trim();
 
 export const store = () => getStore({ name: 'odatlar', consistency: 'strong' });
 
@@ -36,17 +36,32 @@ export function checkInitData(initData) {
   }
 }
 
+// Telegram API chaqiruvi. Hech qachon xato tashlamaydi: muammo bo'lsa {ok:false, description} qaytaradi.
 export async function tg(method, payload) {
-  const r = await fetch(`https://api.telegram.org/bot${token()}/${method}`, {
-    method: 'POST',
-    ...(payload instanceof FormData
-      ? { body: payload }
-      : { headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) }),
-  });
-  let j = {};
-  try { j = await r.json(); } catch {}
-  return j;
+  let r;
+  try {
+    r = await fetch(`https://api.telegram.org/bot${token()}/${method}`, {
+      method: 'POST',
+      signal: AbortSignal.timeout(8000),
+      ...(payload instanceof FormData
+        ? { body: payload }
+        : { headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) }),
+    });
+  } catch (e) {
+    const timeout = e && (e.name === 'TimeoutError' || e.name === 'AbortError');
+    return { ok: false, description: timeout ? 'Telegram javob bermadi (vaqt tugadi)' : 'Telegram bilan aloqa yoʻq: ' + String((e && e.message) || e) };
+  }
+  try { return await r.json(); } catch { return { ok: false, error_code: r.status, description: 'Telegram notoʻgʻri javob qaytardi (HTTP ' + r.status + ')' }; }
 }
+
+// Har qanday kutilmagan xatoni ushlab, tushunarli JSON qaytaradi (Netlify xato sahifasi o'rniga).
+export const safe = fn => async (req, ctx) => {
+  try { return await fn(req, ctx); }
+  catch (e) {
+    console.error(e);
+    return json({ ok: false, err: 'server xatosi: ' + String((e && e.message) || e).slice(0, 200) }, 500);
+  }
+};
 
 export const sendText = (chat_id, text) => tg('sendMessage', { chat_id, text, disable_web_page_preview: true });
 
