@@ -1,6 +1,7 @@
 // Umumiy yordamchi funksiyalar: Telegram API, initData tekshiruvi, saqlash.
 // Bot tokeni va admin chat ID faqat Netlify muhit o'zgaruvchilaridan olinadi.
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
+import { request as httpsRequest } from 'node:https';
 import { getStore } from '@netlify/blobs';
 
 export const token = () => (process.env.TELEGRAM_BOT_TOKEN || '').trim();
@@ -36,22 +37,47 @@ export function checkInitData(initData) {
   }
 }
 
-// Telegram API chaqiruvi. Hech qachon xato tashlamaydi: muammo bo'lsa {ok:false, description} qaytaradi.
-export async function tg(method, payload) {
-  let r;
-  try {
-    r = await fetch(`https://api.telegram.org/bot${token()}/${method}`, {
-      method: 'POST',
-      signal: AbortSignal.timeout(8000),
-      ...(payload instanceof FormData
-        ? { body: payload }
-        : { headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) }),
+// Telegram'ga bitta HTTPS so'rov. Faqat IPv4 ishlatiladi: Netlify (AWS Lambda) serverlarida
+// IPv6 ulanishi osilib qolib, "vaqt tugadi" xatosiga olib kelishi mumkin.
+function post(path, buf, type, ms) {
+  return new Promise((resolve, reject) => {
+    const rq = httpsRequest({
+      host: 'api.telegram.org', path, method: 'POST', family: 4, timeout: ms,
+      headers: { 'content-type': type, 'content-length': buf.length },
+    }, res => {
+      const parts = [];
+      res.on('data', c => parts.push(c));
+      res.on('end', () => resolve({ status: res.statusCode, text: Buffer.concat(parts).toString('utf8') }));
+      res.on('error', reject);
     });
-  } catch (e) {
-    const timeout = e && (e.name === 'TimeoutError' || e.name === 'AbortError');
-    return { ok: false, description: timeout ? 'Telegram javob bermadi (vaqt tugadi)' : 'Telegram bilan aloqa yoʻq: ' + String((e && e.message) || e) };
+    rq.on('timeout', () => rq.destroy(Object.assign(new Error('timeout'), { name: 'TimeoutError' })));
+    rq.on('error', reject);
+    rq.end(buf);
+  });
+}
+
+// Telegram API chaqiruvi. Hech qachon xato tashlamaydi: muammo bo'lsa {ok:false, description} qaytaradi.
+// Aloqa uzilsa bir marta qayta urinadi.
+export async function tg(method, payload) {
+  let buf, type;
+  if (payload instanceof FormData) {
+    const r = new Response(payload);
+    buf = Buffer.from(await r.arrayBuffer());
+    type = r.headers.get('content-type');
+  } else {
+    buf = Buffer.from(JSON.stringify(payload));
+    type = 'application/json';
   }
-  try { return await r.json(); } catch { return { ok: false, error_code: r.status, description: 'Telegram notoʻgʻri javob qaytardi (HTTP ' + r.status + ')' }; }
+  let last;
+  for (const ms of [4000, 4500]) {
+    try {
+      const r = await post(`/bot${token()}/${method}`, buf, type, ms);
+      try { return JSON.parse(r.text); }
+      catch { return { ok: false, error_code: r.status, description: 'Telegram notoʻgʻri javob qaytardi (HTTP ' + r.status + ')' }; }
+    } catch (e) { last = e; }
+  }
+  const timeout = last && last.name === 'TimeoutError';
+  return { ok: false, description: timeout ? 'Telegram javob bermadi (vaqt tugadi)' : 'Telegram bilan aloqa yoʻq: ' + String((last && (last.code || last.message)) || last) };
 }
 
 // Har qanday kutilmagan xatoni ushlab, tushunarli JSON qaytaradi (Netlify xato sahifasi o'rniga).
